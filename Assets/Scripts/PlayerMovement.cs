@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -5,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5.0f;
     public float jumpForce = 10.0f;
 
-    private Rigidbody2D rb;
+    private Rigidbody2D _rigidbody;
     private bool isGrounded;
 
     [Header("Ground Check")]
@@ -13,50 +14,79 @@ public class PlayerMovement : MonoBehaviour
     public float groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
 
-    private PlayerAnimation playerAnimation;
+    private PlayerAnimation _playerAnimation;
 
-    private void Start()
+    public InputManagerSO inputManager;
+
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        playerAnimation = GetComponent<PlayerAnimation>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _playerAnimation = GetComponent<PlayerAnimation>();
+    }
+
+    private void OnEnable()
+    {
+        inputManager.OnMovePerformed += InputManager_OnMovePerformed;
+        inputManager.OnMoveCanceled += InputManager_OnMoveCanceled;
+    }
+
+    private void OnDisable()
+    {
+        inputManager.OnMovePerformed -= InputManager_OnMovePerformed;
+        inputManager.OnMoveCanceled -= InputManager_OnMoveCanceled;
+    }
+
+    private void InputManager_OnMovePerformed(object sender, Vector2 e)
+    {
+        Debug.Log(e);
+    }
+
+    private void InputManager_OnMoveCanceled(object sender, EventArgs e)
+    {
+        Debug.Log(e);
     }
 
     public void HandleMovement()
     {
         float moveInput = Input.GetAxis("Horizontal");
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+        _rigidbody.linearVelocity = new Vector2(moveInput * moveSpeed, _rigidbody.linearVelocity.y);
 
-        if (playerAnimation != null)
+        if (_playerAnimation != null)
         {
-            playerAnimation.SetWalking(moveInput != 0);
+            _playerAnimation.SetWalking(moveInput != 0);
         }
 
         if (moveInput != 0)
         {
-            GetComponent<SpriteRenderer>().flipX = moveInput < 0;
+            if (moveInput > 0)
+            {
+                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            }
+            else if (moveInput < 0)
+            {
+                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
         }
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, jumpForce);
             //playerAnimation.PlayJumpAnimation();
         }
 
         bool isAirborne = !isGrounded;
-        playerAnimation.SetJuping(isAirborne);
+        //_playerAnimation.SetJuping(isAirborne);
 
-        if (isAirborne && rb.linearVelocity.y < -0.1f)
+        if (isAirborne && _rigidbody.linearVelocity.y < -0.1f)
         {
-            playerAnimation?.SetFalling(true);
+            //_playerAnimation?.SetFalling(true);
         }
 
         if (!isGrounded)
         {
-            playerAnimation?.PlayLanding();
+            //_playerAnimation?.PlayLanding();
         }
-
     }
-
 }

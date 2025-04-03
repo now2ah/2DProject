@@ -9,7 +9,7 @@ public class PlayerAttack : MonoBehaviour
     private bool isAttacking = false;
 
     [Header("애니메이션 상태 이름")]
-    public string attackStateName = "Attack";
+    public string attackStateName = "0_Attack_Normal";
 
     void Start()
     {
@@ -27,12 +27,13 @@ public class PlayerAttack : MonoBehaviour
         if (playerAnimation != null)
         {
             playerAnimation.TriggerAttack();
+            SoundManager.Instance.PlaySfx(ESFX.ATTACK);
         }
 
-        StartCoroutine(AttackCooldownByAimation());
+        StartCoroutine(AttackCooldownByAnimation());
     }
 
-    private IEnumerator AttackCooldownByAimation()
+    private IEnumerator AttackCooldownByAnimation()
     {
         isAttacking = true;
 
