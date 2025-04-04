@@ -30,9 +30,11 @@ public class Sword : Weapon
     {
         GameObject effectObj = Instantiate(_attackEffectPrefab, transform.position + offset, direction);
         Animator animator = effectObj.GetComponent<Animator>();
-        float effectTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        float effectTime = animator.GetCurrentAnimatorStateInfo(0).length;
+        Debug.Log(effectTime);
         yield return new WaitForSeconds(effectTime);
         Destroy(effectObj);
+        Debug.Log("Destroyed");
     }
 
     protected override void _Initialize()

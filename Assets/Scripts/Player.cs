@@ -108,6 +108,8 @@ public class Player : MonoBehaviour
 
     public void Attack()
     {
+        if (_isAttacking) { return; }
+
         StartCoroutine(AttackCoroutine());
     }
 
