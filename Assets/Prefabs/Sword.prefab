@@ -102,6 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  effectOffset: {x: 0.1, y: 0.1, z: 0}
   _attackEffectPrefab: {fileID: 4061464141295145388, guid: 506f3600605591047aa3c1ac8f9fd84a, type: 3}
 --- !u!61 &3289840164109094204
 BoxCollider2D:

@@ -4,6 +4,8 @@ using UnityEngine.Events;
 
 public class Sword : Weapon
 {
+    public Vector3 effectOffset = new Vector3(0.1f, 0.1f, 0f);
+
     [SerializeField] private GameObject _attackEffectPrefab;
 
     public GameObject AttackEffectPrefab { get { return _attackEffectPrefab; } }
@@ -15,18 +17,13 @@ public class Sword : Weapon
 
     public override void PlayAttackEffect(bool isRight)
     {
-        Vector3 offset = Vector3.zero;
         Quaternion direction = Quaternion.identity;
-        if (isRight)
+        if (!isRight)
         {
-            offset = new Vector3(0.3f * 1f, 0.5f, 0f);
-        }
-        else
-        {
-            offset = new Vector3(0.3f * -1f, 0.5f, 0f);
+            effectOffset = new Vector3(effectOffset.x * -1f, effectOffset.y, 0f);
             direction = Quaternion.Euler(0f, 180f, 0f);
         }
-        StartCoroutine(PlayEffectCoroutine(offset, direction));
+        StartCoroutine(PlayEffectCoroutine(effectOffset, direction));
     }
 
     IEnumerator PlayEffectCoroutine(Vector3 offset, Quaternion direction)

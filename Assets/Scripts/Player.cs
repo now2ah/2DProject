@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public InputManagerSO inputManager;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
+    private Transform _itemBagTransform;
 
     private float _inputX;
     private float _inputY;
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _itemBagTransform = transform.GetChild(2);
     }
 
     private void Update()
@@ -53,7 +55,9 @@ public class Player : MonoBehaviour
             if (collision.TryGetComponent<Equipment>(out Equipment item))
             {
                 _Equip(item);
-                item.gameObject.SetActive(false);
+                item.transform.SetParent(_itemBagTransform);
+                SpriteRenderer spriteRenderer = item.GetComponent<SpriteRenderer>();
+                spriteRenderer.enabled = false;
             }
         }
     }
@@ -99,7 +103,12 @@ public class Player : MonoBehaviour
 
     private void InputManager_OnAttackPerformed(object sender, EventArgs e)
     {
-        _Attack();
+        _TriggerAttackAnimation();
+    }
+
+    public void Attack()
+    {
+        StartCoroutine(AttackCoroutine());
     }
 
     void _HandleMovement()
@@ -144,7 +153,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void _Attack()
+    void _TriggerAttackAnimation()
     {
         if (_isAttacking) { return; }
 
@@ -152,10 +161,6 @@ public class Player : MonoBehaviour
         {
             _animator.SetTrigger("AttackTrigger");
         }
-
-        SoundManager.Instance.PlaySfx(ESFX.ATTACK);
-
-        StartCoroutine(AttackCoroutine());
     }
 
     private IEnumerator AttackCoroutine()
