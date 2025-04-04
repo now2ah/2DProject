@@ -42,6 +42,16 @@ Tilemap:
   m_GameObject: {fileID: 4676906144969488613}
   m_Enabled: 1
   m_Tiles:
+  - first: {x: 7, y: -4, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 26
+      m_TileSpriteIndex: 11
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741826
   - first: {x: -5, y: -2, z: 0}
     second:
       serializedVersion: 2
@@ -356,6 +366,8 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: da013b017e2c3c849ab8c072d4e798f7, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 6eef6f639252ca74981ff8b001e77557, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: a563f2418b5b57d43a49cd7246adffa0, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: -4297248504358722882, guid: f916321443d44f14c9303a5f558e4b99, type: 3}
@@ -379,7 +391,7 @@ Tilemap:
     m_Data: {fileID: -782132033, guid: f916321443d44f14c9303a5f558e4b99, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 1262550587, guid: f916321443d44f14c9303a5f558e4b99, type: 3}
-  - m_RefCount: 1
+  - m_RefCount: 2
     m_Data: {fileID: -480531053, guid: f916321443d44f14c9303a5f558e4b99, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -1188638519, guid: f916321443d44f14c9303a5f558e4b99, type: 3}
@@ -410,7 +422,7 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 1720521780, guid: f916321443d44f14c9303a5f558e4b99, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 26
+  - m_RefCount: 27
     m_Data:
       e00: 1
       e01: 0
@@ -429,13 +441,13 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 26
+  - m_RefCount: 27
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: -5, y: -2, z: 0}
-  m_Size: {x: 14, y: 3, z: 1}
+  m_Origin: {x: -5, y: -4, z: 0}
+  m_Size: {x: 14, y: 5, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -552,7 +564,7 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
---- !u!114 &5332670046551106875
+--- !u!114 &8132429446602899212
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
