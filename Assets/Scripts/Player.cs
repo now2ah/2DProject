@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Windows;
 
 
-public class Player : MonoBehaviour
+public partial class Player : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
     public float jumpForce = 7.0f;
@@ -16,6 +18,8 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private Transform _itemBagTransform;
+
+    private List<Item> _groundItemList;
 
     private float _inputX;
     private float _inputY;
@@ -33,13 +37,15 @@ public class Player : MonoBehaviour
     //equipment
     private Weapon _weapon;
 
-    public GameObject tempSwordEffect; 
+    public event EventHandler<Vector3> OnLoot;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _itemBagTransform = transform.GetChild(2);
+        _groundItemList = new List<Item>();
+        _inventoryItemList = new List<Item>();
     }
 
     private void Update()
@@ -48,26 +54,14 @@ public class Player : MonoBehaviour
         _SetAnimationParams();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Item")
-        {
-            if (collision.TryGetComponent<Equipment>(out Equipment item))
-            {
-                _Equip(item);
-                item.transform.SetParent(_itemBagTransform);
-                SpriteRenderer spriteRenderer = item.GetComponent<SpriteRenderer>();
-                spriteRenderer.enabled = false;
-            }
-        }
-    }
-
     private void OnEnable()
     {
         inputManager.OnMovePerformed += InputManager_OnMovePerformed;
         inputManager.OnMoveCanceled += InputManager_OnMoveCanceled;
         inputManager.OnJumpPerformed += InputManager_OnJumpPerformed;
         inputManager.OnAttackPerformed += InputManager_OnAttackPerformed;
+        inputManager.OnInteractPerformed += InputManager_OnInteractPerformed;
+        inputManager.OnLootPerformed += InputManager_OnLootPerformed;
     }
 
     private void OnDisable()
@@ -76,6 +70,7 @@ public class Player : MonoBehaviour
         inputManager.OnMoveCanceled -= InputManager_OnMoveCanceled;
         inputManager.OnJumpPerformed -= InputManager_OnJumpPerformed;
         inputManager.OnAttackPerformed -= InputManager_OnAttackPerformed;
+        inputManager.OnInteractPerformed -= InputManager_OnInteractPerformed;
     }
 
     private void InputManager_OnMovePerformed(object sender, Vector2 input)
@@ -106,11 +101,26 @@ public class Player : MonoBehaviour
         _TriggerAttackAnimation();
     }
 
+    private void InputManager_OnInteractPerformed(object sender, EventArgs e)
+    {
+
+    }
+
+    private void InputManager_OnLootPerformed(object sender, EventArgs e)
+    {
+        _LootItemOnGround();
+    }
+
     public void Attack()
     {
         if (_isAttacking) { return; }
 
         StartCoroutine(AttackCoroutine());
+    }
+
+    public void LootItem(Item item)
+    {
+        Debug.Log(item.ItemInfo.name);
     }
 
     void _HandleMovement()
@@ -174,7 +184,7 @@ public class Player : MonoBehaviour
 
         if (_weapon != null)
         {
-            _weapon.PlayAttackEffect(_isLookRight);
+            //_weapon.PlayAttackEffect(_isLookRight);
         }
 
         if (stateInfo.IsName("0_Attack_Normal"))
@@ -194,8 +204,54 @@ public class Player : MonoBehaviour
     {
         _weapon = item as Weapon;
         SpriteRenderer slotSprite = _RWeaponSlot.GetComponent<SpriteRenderer>();
-        slotSprite.sprite = item.GetComponent<SpriteRenderer>().sprite;
+        //slotSprite.sprite = item.GetComponent<SpriteRenderer>().sprite;
+
     }
+
+    void _LootItemOnGround()
+    {
+        OnLoot?.Invoke(this, transform.position);
+        //_Loot();
+    }
+
+    //Item _GetNearestItem()
+    //{
+    //    if (_groundItemList.Count <= 0)
+    //        return null;
+
+    //    float nearestDistance = Mathf.Infinity;
+    //    Item nearestItem = null;
+    //    foreach (Item item in _groundItemList)
+    //    {
+    //        float distance = Vector3.Distance(transform.position, item.gameObject.transform.position);
+    //        if (distance < nearestDistance)
+    //        {
+    //            nearestDistance = distance;
+    //            nearestItem = item;
+    //        }
+    //    }
+
+    //    return nearestItem;
+    //}
+
+    //void _Loot(Item item)
+    //{
+        //if (null == item)
+            //return;
+
+        //add to inventory
+        //item.transform.SetParent(_itemBagTransform);
+
+        //if (item.TryGetComponent<SpriteRenderer>(out SpriteRenderer sr))
+        //{
+        //    sr.enabled = false;
+        //}
+
+        //if (item.TryGetComponent<Collider2D>(out Collider2D col))
+        //{
+        //    col.enabled = false;
+        //}
+    //}
 
     void _SetAnimationParams()
     {

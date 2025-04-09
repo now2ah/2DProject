@@ -1,8 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class Sword : Weapon
+public abstract class WeaponEffect : MonoBehaviour
+{
+    public abstract void PlayAttackEffect(bool isRight);
+}
+
+public class SwordEffect : WeaponEffect
 {
     public Vector3 effectOffset = new Vector3(0.1f, 0.1f, 0f);
 
@@ -12,7 +16,7 @@ public class Sword : Weapon
 
     private void Awake()
     {
-        _Initialize();
+
     }
 
     public override void PlayAttackEffect(bool isRight)
@@ -35,13 +39,5 @@ public class Sword : Weapon
         yield return new WaitForSeconds(effectTime);
         Destroy(effectObj);
         Debug.Log("Destroyed");
-    }
-
-    protected override void _Initialize()
-    {
-        _itemName = "Sword";
-        _itemType = EItemType.EQUIPMENT;
-        _equipmentType = EEquipmentType.WEAPON;
-        damage = 5f;
     }
 }
