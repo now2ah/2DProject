@@ -35,4 +35,18 @@ public partial class Player : MonoBehaviour
         }
     }
 
+    public void LootItem(Item item)
+    {
+        Debug.Log(item.ItemInfo.name);
+
+        if (_inventoryItemList != null)
+        {
+            _inventoryItemList.Add(item);
+        }
+    }
+
+    void _LootItemOnGround()
+    {
+        OnLoot?.Invoke(this, transform.position);
+    }
 }

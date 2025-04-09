@@ -118,11 +118,6 @@ public partial class Player : MonoBehaviour
         StartCoroutine(AttackCoroutine());
     }
 
-    public void LootItem(Item item)
-    {
-        Debug.Log(item.ItemInfo.name);
-    }
-
     void _HandleMovement()
     {
         _rigidbody.linearVelocity = new Vector2(_inputX * moveSpeed, _rigidbody.linearVelocity.y);
@@ -206,12 +201,6 @@ public partial class Player : MonoBehaviour
         SpriteRenderer slotSprite = _RWeaponSlot.GetComponent<SpriteRenderer>();
         //slotSprite.sprite = item.GetComponent<SpriteRenderer>().sprite;
 
-    }
-
-    void _LootItemOnGround()
-    {
-        OnLoot?.Invoke(this, transform.position);
-        //_Loot();
     }
 
     //Item _GetNearestItem()
