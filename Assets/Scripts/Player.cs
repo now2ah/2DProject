@@ -17,9 +17,6 @@ public partial class Player : MonoBehaviour
     public InputManagerSO inputManager;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
-    private Transform _itemBagTransform;
-
-    private List<Item> _groundItemList;
 
     private float _inputX;
     private float _inputY;
@@ -35,16 +32,16 @@ public partial class Player : MonoBehaviour
     [SerializeField] private GameObject _RShieldSlot;
 
     //equipment
-    private Weapon _weapon;
+    private Weapon _weaponSlot;
 
     public event EventHandler<Vector3> OnLoot;
+    public event EventHandler OnEquip;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _itemBagTransform = transform.GetChild(2);
-        _groundItemList = new List<Item>();
+        _equipments = new Equipment[MAX_EQUIPMENT_SLOT];
         _inventoryItemList = new List<Item>();
     }
 
@@ -177,9 +174,9 @@ public partial class Player : MonoBehaviour
         yield return null;
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
 
-        if (_weapon != null)
+        if (_weaponSlot != null)
         {
-            //_weapon.PlayAttackEffect(_isLookRight);
+            _weaponSlot.PlayAttackEffect(_isLookRight);
         }
 
         if (stateInfo.IsName("0_Attack_Normal"))
@@ -194,53 +191,6 @@ public partial class Player : MonoBehaviour
 
         _isAttacking = false;
     }
-
-    void _Equip(Equipment item)
-    {
-        _weapon = item as Weapon;
-        SpriteRenderer slotSprite = _RWeaponSlot.GetComponent<SpriteRenderer>();
-        //slotSprite.sprite = item.GetComponent<SpriteRenderer>().sprite;
-
-    }
-
-    //Item _GetNearestItem()
-    //{
-    //    if (_groundItemList.Count <= 0)
-    //        return null;
-
-    //    float nearestDistance = Mathf.Infinity;
-    //    Item nearestItem = null;
-    //    foreach (Item item in _groundItemList)
-    //    {
-    //        float distance = Vector3.Distance(transform.position, item.gameObject.transform.position);
-    //        if (distance < nearestDistance)
-    //        {
-    //            nearestDistance = distance;
-    //            nearestItem = item;
-    //        }
-    //    }
-
-    //    return nearestItem;
-    //}
-
-    //void _Loot(Item item)
-    //{
-        //if (null == item)
-            //return;
-
-        //add to inventory
-        //item.transform.SetParent(_itemBagTransform);
-
-        //if (item.TryGetComponent<SpriteRenderer>(out SpriteRenderer sr))
-        //{
-        //    sr.enabled = false;
-        //}
-
-        //if (item.TryGetComponent<Collider2D>(out Collider2D col))
-        //{
-        //    col.enabled = false;
-        //}
-    //}
 
     void _SetAnimationParams()
     {

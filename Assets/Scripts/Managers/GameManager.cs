@@ -20,6 +20,9 @@ public class GameManager : Singleton<GameManager>
             //instantiate Player
         }
 
-        ItemManager.Instance.CreateGroundItem(EWeapon.SWORD, Vector3.zero);
+        //ItemManager.Instance.CreateGroundItem(EConsumableType.APPLE, Vector3.zero + new Vector3(1f, 0f, 0f));
+
+        ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, Vector3.zero);
+        //ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, Vector3.zero + new Vector3(1f, 0f, 0f));
     }
 }

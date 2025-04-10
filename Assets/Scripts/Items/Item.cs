@@ -4,12 +4,31 @@ public enum EItemType
 {
     NORMAL,
     EQUIPMENT,
-    WEAPON,
+    CONSUMABLE,
+}
+
+public enum EConsumableType
+{
+    APPLE,
 }
 
 public enum EEquipmentType
 {
+    HEAD,
     WEAPON,
+    UPPER_ARMOR,
+    SHIELD,
+    LOWER_ARMOR,
+}
+
+public enum EWeaponType
+{
+    SWORD,
+}
+
+public enum EShieldType
+{
+
 }
 
 public class Item
@@ -26,16 +45,20 @@ public interface IUsable
     public void Use();
 }
 
-public class ConsumableItem : Item, IUsable
+public class ConsumableItem : IUsable
 {
     public virtual void Use() { }
 }
 
-public class Equipment : Item
+public abstract class Equipment : MonoBehaviour
 {
+    EEquipmentType _type;
+    protected Item _item;
 
+    public Item Item { get { return _item; } set { _item = value; } }
 }
 
-public class Weapon : Equipment
+public abstract class Weapon : Equipment
 {
+    public abstract void PlayAttackEffect(bool isRight);
 }

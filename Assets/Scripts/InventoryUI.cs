@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
 
@@ -13,20 +14,53 @@ public class InventoryUI : MonoBehaviour
         _itemList = new List<Item>();
     }
 
-    void _GetPlayersItemList()
+    private void OnEnable()
+    {
+        _SubscribeEvent();
+        _RefreshInventoryUI();
+    }
+
+    void _SubscribeEvent()
+    {
+        if (null == GameManager.Instance.Player) { return; }
+
+        GameManager.Instance.Player.OnLoot += Player_OnLoot;
+    }
+
+    private void Player_OnLoot(object sender, Vector3 e)
+    {
+        _RefreshInventoryUI();
+    }
+
+    void _RefreshInventoryUI()
+    {
+        _itemList = _GetPlayersItemList();
+        _ShowItemList();
+    }
+
+    List<Item> _GetPlayersItemList()
     {
         if (_itemList != null)
         {
-            _itemList = GameManager.Instance.Player.InventoryItemList;
-
-            foreach(var item in _itemList)
-            {
-            }
+            return GameManager.Instance.Player.InventoryItemList;
         }
+        else { return null; }
     }
 
-    private void OnEnable()
+    void _ShowItemList()
     {
-        _GetPlayersItemList();
+        for (int i=0; i<_itemList.Count; ++i)
+        {
+            if (i < inventorySlotList.Count)    //temp code before implement inventory scroll view
+            {
+                if (inventorySlotList[i].transform.GetChild(0).TryGetComponent<Image>(out Image image))
+                {
+                    if (null == _itemList[i]) { break; }
+
+                    image.sprite = _itemList[i].ItemInfo.itemSprite;
+                    image.gameObject.SetActive(true);
+                }
+            }
+        }
     }
 }

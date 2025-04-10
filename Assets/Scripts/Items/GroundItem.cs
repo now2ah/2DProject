@@ -4,6 +4,8 @@ public class GroundItem : MonoBehaviour
 {
     public static float LOOT_DISTANCE = 2.0f;
 
+    static float nearestDistance = Mathf.Infinity;
+
     Item _item;
     SpriteRenderer _spriteRenderer;
 
@@ -14,20 +16,21 @@ public class GroundItem : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Initialize(EItemType type)
+    public void Initialize()
     {
-        if (type == EItemType.NORMAL)
-        {
-            _item = new Item();
-        }
-        else if (type == EItemType.EQUIPMENT)
-        {
-            _item = new Equipment();
-        }
-        else if (type == EItemType.WEAPON)
-        {
-            _item = new Weapon();
-        }
+        _item = new Item();
+        //if (type == EItemType.NORMAL)
+        //{
+            
+        //}
+        //else if (type == EItemType.EQUIPMENT)
+        //{
+        //    _item = new Equipment();
+        //}
+        //else if (type == EItemType.WEAPON)
+        //{
+        //    _item = new Weapon();
+        //}
 
         _SubscribeEvent();
     }
