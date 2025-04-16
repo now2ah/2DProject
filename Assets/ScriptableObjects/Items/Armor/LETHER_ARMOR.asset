@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: LETHER_ARMOR
   m_EditorClassIdentifier: Assembly-CSharp::ArmorInfoSO
-  itemName: 
-  itemType: 0
-  itemSprite: {fileID: 0}
-  equipmentType: 0
-  itemSprite2: {fileID: 0}
-  itemSprite3: {fileID: 0}
-  armor: 0
+  itemName: Lether Armor
+  itemType: 1
+  itemSprite: {fileID: -3992137426342128158, guid: 1810f09d324df46289d58e432045bcd1, type: 3}
+  equipmentType: 2
+  armorType: 0
+  itemSprite2: {fileID: -1120026500337400717, guid: 1810f09d324df46289d58e432045bcd1, type: 3}
+  itemSprite3: {fileID: -1554369935797715747, guid: 1810f09d324df46289d58e432045bcd1, type: 3}
+  armor: 1
