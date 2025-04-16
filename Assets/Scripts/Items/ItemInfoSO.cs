@@ -21,6 +21,13 @@ public class EquipmentInfoSO : ItemInfoSO
     public EEquipmentType equipmentType;
 }
 
+[CreateAssetMenu(fileName = "HeadInfoSO", menuName = "ScriptableObjects/HeadInfoSO")]
+public class HeadInfoSO : EquipmentInfoSO
+{
+    public EWeaponType headType;
+    public float armor;
+}
+
 [CreateAssetMenu(fileName = "WeaponInfoSO", menuName = "ScriptableObjects/WeaponInfoSO")]
 public class WeaponInfoSO : EquipmentInfoSO
 {
@@ -31,6 +38,7 @@ public class WeaponInfoSO : EquipmentInfoSO
 [CreateAssetMenu(fileName = "ArmorInfoSO", menuName = "ScriptableObjects/ArmorInfoSO")]
 public class ArmorInfoSO : EquipmentInfoSO
 {
+    public EArmorType armorType;
     public Sprite itemSprite2;
     public Sprite itemSprite3;
     public float armor;

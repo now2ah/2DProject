@@ -20,6 +20,8 @@ public class GameManager : Singleton<GameManager>
             //instantiate Player
         }
 
+        _player.Initialize();
+
         //ItemManager.Instance.CreateGroundItem(EConsumableType.APPLE, Vector3.zero + new Vector3(1f, 0f, 0f));
 
         ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, Vector3.zero);

@@ -46,5 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemInfos:
   - {fileID: 11400000, guid: 8aa4b00a9287aeb4d9fea05063bbf150, type: 2}
+  - {fileID: 11400000, guid: 5957c8a3cfbbea048991b2dad0946885, type: 2}
   groundItemPrefab: {fileID: 3529242645565041493, guid: 820feff02fb796c48a3d318d593fe93b, type: 3}
   swordAttackPrefab: {fileID: 4061464141295145388, guid: 506f3600605591047aa3c1ac8f9fd84a, type: 3}

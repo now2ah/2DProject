@@ -112,6 +112,9 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
         for (int i=0; i<playerEquipments.Length; ++i)
         {
+            if (null == playerEquipments[i])
+                continue;
+
             EquipmentSlot slot = new EquipmentSlot();
             slot.containedEquipment = playerEquipments[i];
             slot.uiObject = equipmentSlots[i];
@@ -139,6 +142,7 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     continue;
 
                 image.sprite = _equipments[i].Item.ItemInfo.itemSprite;
+                image.SetNativeSize();
                 image.gameObject.SetActive(true);
             }
         }

@@ -25,6 +25,11 @@ public enum EWeaponType
     SWORD,
 }
 
+public enum EArmorType
+{
+    LETHER_ARMOR,
+}
+
 public enum EShieldType
 {
 
@@ -60,4 +65,9 @@ public abstract class Equipment : MonoBehaviour
 public abstract class Weapon : Equipment
 {
     public abstract void PlayAttackEffect(bool isRight);
+}
+
+public abstract class Armor : Equipment
+{
+
 }

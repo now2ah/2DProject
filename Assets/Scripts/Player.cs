@@ -29,6 +29,9 @@ public partial class Player : MonoBehaviour
     public event EventHandler<Vector3> OnLoot;
     public event EventHandler OnEquip;
 
+    //temp
+    public ItemInfoSO startArmorItemInfo;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -102,6 +105,7 @@ public partial class Player : MonoBehaviour
 
     public void Initialize()
     {
+        _Equip(ItemManager.Instance.CreateItem(startArmorItemInfo));
     }
 
     public void Attack()

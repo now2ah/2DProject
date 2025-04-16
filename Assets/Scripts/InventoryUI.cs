@@ -130,6 +130,7 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             if (imageTransform.gameObject.TryGetComponent<Image>(out Image image))
             {
                 image.sprite = slot.itemSprite;
+                image.SetNativeSize();
                 slot.uiObject.transform.GetChild(0).gameObject.SetActive(true);
             }
         }

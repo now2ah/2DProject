@@ -3212,10 +3212,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   inputManager: {fileID: 11400000, guid: 8babc4a7c7252dc4d8ab998251337788, type: 2}
-  _HeadSlot: {fileID: 2304382086392943190}
-  _WeaponSlot: {fileID: 4048492479738697814}
-  _ArmorSlot: {fileID: 3701218708681003386}
-  _ShieldSlot: {fileID: 4917617741457074994}
+  startArmorItemInfo: {fileID: 11400000, guid: 5957c8a3cfbbea048991b2dad0946885, type: 2}
+  _headSlot: {fileID: 2304382086392943190}
+  _weaponSlot: {fileID: 4048492479738697814}
+  _armorSlot: {fileID: 3701218708681003386}
+  _shieldSlot: {fileID: 4917617741457074994}
+  _armorLSlot: {fileID: 3454835060006859545}
+  _armorRSlot: {fileID: 3961577981220055767}
   _equipments: []
 --- !u!210 &724922068472806817
 SortingGroup:

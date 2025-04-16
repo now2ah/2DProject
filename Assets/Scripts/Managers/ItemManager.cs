@@ -24,29 +24,51 @@ public class ItemManager : Singleton<ItemManager>
         _SetUpItemInfoDictionary();
     }
 
-    public Equipment CreateEquipmentTo(GameObject playerObj, Item item)
+    public Item CreateItem(ItemInfoSO itemInfo)
     {
-        Equipment equipment = null;
+        Item createdItem = new Item();
+        createdItem.ItemInfo = itemInfo;
+
+        return createdItem;
+    }
+
+    public Equipment EquipmentTo(GameObject playerObj, Item item)
+    {
+        Equipment createdEquipment = null;
 
         if (item != null && item.ItemInfo.itemType is EItemType.EQUIPMENT)
         {
             if (item.ItemInfo is EquipmentInfoSO)
             {
+                //head
+                //if (item.ItemInfo is EquipmentInfoSO)
+                //{
+
+                //}
+                //weapon
                 if (item.ItemInfo is WeaponInfoSO)
                 {
                     switch (((WeaponInfoSO)item.ItemInfo).weaponType)
                     {
                         case EWeaponType.SWORD:
-                            equipment = playerObj.AddComponent<Sword>();
-                            equipment.Item = item;
-                            ((Sword)equipment).AttackEffectPrefab = swordAttackPrefab;
+                            createdEquipment = playerObj.AddComponent<Sword>();
+                            createdEquipment.Item = item;
+                            ((Sword)createdEquipment).AttackEffectPrefab = swordAttackPrefab;
                             break;
                     }
                 }
-                else if (item.ItemInfo is ShieldInfoSO)
+                //armor
+                else if (item.ItemInfo is ArmorInfoSO)
                 {
-
+                    switch (((ArmorInfoSO)item.ItemInfo).armorType)
+                    {
+                        case EArmorType.LETHER_ARMOR:
+                            createdEquipment = playerObj.AddComponent<LetherArmor>();
+                            createdEquipment.Item = item;
+                            break;
+                    }
                 }
+                //shield
             }
         }
         else
@@ -54,7 +76,7 @@ public class ItemManager : Singleton<ItemManager>
             Debug.Log("item has different item type. (need to equipment type)");
         }
 
-        return equipment;
+        return createdEquipment;
     }
 
     public GameObject CreateGroundItem(EConsumableType consumableType, Vector3 position)
