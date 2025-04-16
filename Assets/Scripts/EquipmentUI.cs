@@ -22,19 +22,19 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
     public InventoryUI inventoryUI;
 
-    public GameObject[] equipmentSlots;
-
-    List<EquipmentSlot> _equipmentSlotList;
     Equipment[] _equipments;
+    EquipmentSlot[] _equipmentSlots;
 
     Item _selectedEquipment;
+    EquipmentSlot _selectedSlot;
+
     ItemCursorSpriteUI _itemCursorSprite;
 
     public Item SelectedEquipment { get { return _selectedEquipment; } set { _selectedEquipment = value; } }
+    public EquipmentSlot SelectedSlot { get { return _selectedSlot; } set { _selectedSlot = value; } }
 
     private void Awake()
     {
-        _equipmentSlotList = new List<EquipmentSlot>();
         _equipments = new Equipment[Player.MAX_EQUIPMENT_SLOT];
     }
 
@@ -46,17 +46,12 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     void OnDisable()
     {
-        _UnSetEquipmentSlots();
+        //_UnSetEquipmentSlots();
         _UnSubscribeEvent();
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        //check pointer is on equipment slot
-        //validate equipmentslot
-        //if is validate
-        //equip
-
         RaycastResult hit = eventData.pointerCurrentRaycast;
 
         if (_IsEquipmentSlot(hit.gameObject))
@@ -64,7 +59,8 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             if (_selectedEquipment.ItemInfo.itemType == EItemType.EQUIPMENT)
             {
                 EquipmentSlot slot = _GetSelectedEquipmentSlot(hit.gameObject);
-                slot.SetSlot(_selectedEquipment, slot.uiObject, _selectedEquipment.ItemInfo.itemSprite);
+
+
             }
         }
     }
@@ -79,6 +75,7 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             if (inventoryUI != null)
             {
                 inventoryUI.SelectedItem = _selectedEquipment;
+                inventoryUI.SelectedSlot = null;
             }
 
             _itemCursorSprite = UIManager.Instance.CreateCursorImage();
@@ -134,30 +131,22 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
             if (null == playerEquipments[i])
             {
-                _equipmentSlotList.Add(slot);
+                _equipmentSlots[i] = slot;
                 continue;
             }
 
             slot.containedEquipment = playerEquipments[i];
-            slot.uiObject = equipmentSlots[i];
+            slot.uiObject = _equipmentSlots[i].uiObject;
             slot.equipmentSprite = playerEquipments[i].Item.ItemInfo.itemSprite;
-            _equipmentSlotList.Add(slot);
+            _equipmentSlots[i] = slot;
         }
-    }
-
-    void _UnSetEquipmentSlots()
-    {
-        if (null == _equipmentSlotList || _equipmentSlotList.Count == 0)
-            return;
-
-        _equipmentSlotList.Clear();
     }
 
     void _ShowEquipment()
     {
         for (int i = 0; i < _equipments.Length; ++i)
         {
-            if (equipmentSlots[i].transform.GetChild(0).TryGetComponent<Image>(out Image image))
+            if (_equipmentSlots[i].uiObject.transform.GetChild(0).TryGetComponent<Image>(out Image image))
             {
                 if (null == _equipments[i])
                     continue;
@@ -171,7 +160,7 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     bool _IsEquipmentSlot(GameObject selector)
     {
-        foreach(EquipmentSlot slot in _equipmentSlotList)
+        foreach(EquipmentSlot slot in _equipmentSlots)
         {
             if (slot.uiObject == selector.transform.parent.gameObject)
                 return true;
@@ -184,7 +173,7 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         Equipment selectedEquipment = null;
 
-        foreach (EquipmentSlot slot in _equipmentSlotList)
+        foreach (EquipmentSlot slot in _equipmentSlots)
         {
             if (slot.uiObject == selector.transform.parent.gameObject)
                 selectedEquipment = slot.containedEquipment;
@@ -196,7 +185,7 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     EquipmentSlot _GetSelectedEquipmentSlot(GameObject selector)
     {
         EquipmentSlot selectedSlot = null;
-        foreach (EquipmentSlot slot in _equipmentSlotList)
+        foreach (EquipmentSlot slot in _equipmentSlots)
         {
             if (slot.uiObject == selector.transform.parent.gameObject)
                 selectedSlot = slot;

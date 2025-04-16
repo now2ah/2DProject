@@ -25,14 +25,15 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     public InputManagerSO inputManager;
     public EquipmentUI equipmentUI;
 
-    List<InventorySlot> _inventorySlotList;
     List<Item> _itemList;
-
+    List<InventorySlot> _inventorySlotList;
+    
     Item _selectedItem;
     InventorySlot _selectedSlot;
     ItemCursorSpriteUI _itemCursorSprite;
 
     public Item SelectedItem { get { return _selectedItem; } set { _selectedItem = value; } }
+    public InventorySlot SelectedSlot { get { return _selectedSlot; } set { _selectedSlot = value; } }
 
     private void Awake()
     {
@@ -61,18 +62,17 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             InventorySlot slot = _GetSelectedSlot(hit.gameObject);
 
             //from inventory
-            _SwapItemSlot(_selectedItem, slot.containedItem);
+            if (_selectedSlot != null)
+            {
+                _SwapItemSlot(_selectedItem, slot.containedItem);
+            }
 
             //from equip
 
             //refresh
             _RefreshInventoryUI();
-            //InventorySlot tempSlot = new InventorySlot();
-            //tempSlot.SetSlot(slot.containedItem, slot.uiObject, slot.itemSprite);
-            //slot.SetSlot(_selectedSlot.containedItem, slot.uiObject, _selectedSlot.itemSprite);
-            //_selectedSlot.SetSlot(tempSlot.containedItem, tempSlot.uiObject, tempSlot.itemSprite);
         }
-        
+
         _DestroyCursorImage();
     }
 
@@ -87,6 +87,7 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             if (equipmentUI != null)
             {
                 equipmentUI.SelectedEquipment = _selectedItem;
+                equipmentUI.SelectedSlot = null;
             }
 
             _itemCursorSprite = UIManager.Instance.CreateCursorImage();
@@ -171,7 +172,7 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     bool _IsItemInventorySlot(GameObject selector)
     {
-        foreach(InventorySlot slot in _inventorySlotList)
+        foreach (InventorySlot slot in _inventorySlotList)
         {
             if (slot.uiObject == selector.transform.parent.gameObject)
                 return true;
@@ -219,7 +220,7 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         int fromIndex = -1;
         int destIndex = -1;
 
-        for (int i=0; i<_itemList.Count; ++i)
+        for (int i = 0; i < _itemList.Count; ++i)
         {
             if (_itemList[i] == fromItem)
             {
