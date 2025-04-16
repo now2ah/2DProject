@@ -4,12 +4,20 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
+using UnityEngine.Rendering;
 
 public class InventorySlot
 {
     public Item containedItem;
     public GameObject uiObject;
     public Sprite itemSprite;
+
+    public void SetSlot(Item item, GameObject go, Sprite sprite)
+    {
+        containedItem = item;
+        uiObject = go;
+        itemSprite = sprite;
+    }
 }
 
 public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
@@ -21,7 +29,10 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     List<Item> _itemList;
 
     Item _selectedItem;
+    InventorySlot _selectedSlot;
     ItemCursorSpriteUI _itemCursorSprite;
+
+    public Item SelectedItem { get { return _selectedItem; } set { _selectedItem = value; } }
 
     private void Awake()
     {
@@ -45,6 +56,23 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         RaycastResult hit = eventData.pointerCurrentRaycast;
 
+        if (_IsItemInventorySlot(hit.gameObject))
+        {
+            InventorySlot slot = _GetSelectedSlot(hit.gameObject);
+
+            //from inventory
+            _SwapItemSlot(_selectedItem, slot.containedItem);
+
+            //from equip
+
+            //refresh
+            _RefreshInventoryUI();
+            //InventorySlot tempSlot = new InventorySlot();
+            //tempSlot.SetSlot(slot.containedItem, slot.uiObject, slot.itemSprite);
+            //slot.SetSlot(_selectedSlot.containedItem, slot.uiObject, _selectedSlot.itemSprite);
+            //_selectedSlot.SetSlot(tempSlot.containedItem, tempSlot.uiObject, tempSlot.itemSprite);
+        }
+        
         _DestroyCursorImage();
     }
 
@@ -55,6 +83,11 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (_IsItemInventorySlot(hit.gameObject))
         {
             _selectedItem = _GetSelectedItem(hit.gameObject);
+            _selectedSlot = _GetSelectedSlot(hit.gameObject);
+            if (equipmentUI != null)
+            {
+                equipmentUI.SelectedEquipment = _selectedItem;
+            }
 
             _itemCursorSprite = UIManager.Instance.CreateCursorImage();
             _itemCursorSprite.SetSprite(_selectedItem.ItemInfo.itemSprite);
@@ -160,11 +193,51 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         return selectedItem;
     }
 
+    InventorySlot _GetSelectedSlot(GameObject selector)
+    {
+        InventorySlot selectedSlot = null;
+
+        foreach (InventorySlot slot in _inventorySlotList)
+        {
+            if (slot.uiObject == selector.transform.parent.gameObject)
+                selectedSlot = slot;
+        }
+
+        return selectedSlot;
+    }
+
     void _DestroyCursorImage()
     {
         if (null == _itemCursorSprite)
             return;
 
         Destroy(_itemCursorSprite.gameObject);
+    }
+
+    void _SwapItemSlot(Item fromItem, Item destItem)
+    {
+        int fromIndex = -1;
+        int destIndex = -1;
+
+        for (int i=0; i<_itemList.Count; ++i)
+        {
+            if (_itemList[i] == fromItem)
+            {
+                fromIndex = i;
+            }
+
+            if (_itemList[i] == destItem)
+            {
+                destIndex = i;
+            }
+        }
+
+        if (fromIndex == -1 || destIndex == -1)
+            return;
+
+        Item temp = new Item();
+        temp = _itemList[destIndex];
+        _itemList[destIndex] = _itemList[fromIndex];
+        _itemList[fromIndex] = temp;
     }
 }

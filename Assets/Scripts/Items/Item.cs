@@ -59,6 +59,7 @@ public abstract class Equipment : MonoBehaviour
     EEquipmentType _type;
     protected Item _item;
 
+    public EEquipmentType Type { get { return _type; } set { _type = value; } }
     public Item Item { get { return _item; } set { _item = value; } }
 }
 

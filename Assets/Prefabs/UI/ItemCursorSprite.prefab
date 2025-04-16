@@ -89,3 +89,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputManager: {fileID: 11400000, guid: 8babc4a7c7252dc4d8ab998251337788, type: 2}
+  _offsetX: 50
+  _offsetY: -50

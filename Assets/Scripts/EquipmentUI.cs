@@ -8,6 +8,14 @@ public class EquipmentSlot
     public Equipment containedEquipment;
     public GameObject uiObject;
     public Sprite equipmentSprite;
+
+    public void SetSlot(Item item, GameObject go, Sprite sprite)
+    {
+        containedEquipment.Item = item;
+        containedEquipment.Type = ((EquipmentInfoSO)item.ItemInfo).equipmentType;
+        uiObject = go;
+        equipmentSprite = sprite;
+    }
 }
 
 public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
@@ -19,8 +27,10 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     List<EquipmentSlot> _equipmentSlotList;
     Equipment[] _equipments;
 
-    Equipment _selectedEquipment;
+    Item _selectedEquipment;
     ItemCursorSpriteUI _itemCursorSprite;
+
+    public Item SelectedEquipment { get { return _selectedEquipment; } set { _selectedEquipment = value; } }
 
     private void Awake()
     {
@@ -51,7 +61,11 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
         if (_IsEquipmentSlot(hit.gameObject))
         {
-
+            if (_selectedEquipment.ItemInfo.itemType == EItemType.EQUIPMENT)
+            {
+                EquipmentSlot slot = _GetSelectedEquipmentSlot(hit.gameObject);
+                slot.SetSlot(_selectedEquipment, slot.uiObject, _selectedEquipment.ItemInfo.itemSprite);
+            }
         }
     }
 
@@ -61,10 +75,14 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
         if (_IsEquipmentSlot(hit.gameObject))
         {
-            _selectedEquipment = _GetSelectedEquipment(hit.gameObject);
+            _selectedEquipment = _GetSelectedEquipment(hit.gameObject).Item;
+            if (inventoryUI != null)
+            {
+                inventoryUI.SelectedItem = _selectedEquipment;
+            }
 
             _itemCursorSprite = UIManager.Instance.CreateCursorImage();
-            _itemCursorSprite.SetSprite(_selectedEquipment.Item.ItemInfo.itemSprite);
+            _itemCursorSprite.SetSprite(_selectedEquipment.ItemInfo.itemSprite);
         }
     }
 
@@ -112,14 +130,17 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
         for (int i=0; i<playerEquipments.Length; ++i)
         {
-            if (null == playerEquipments[i])
-                continue;
-
             EquipmentSlot slot = new EquipmentSlot();
+
+            if (null == playerEquipments[i])
+            {
+                _equipmentSlotList.Add(slot);
+                continue;
+            }
+
             slot.containedEquipment = playerEquipments[i];
             slot.uiObject = equipmentSlots[i];
             slot.equipmentSprite = playerEquipments[i].Item.ItemInfo.itemSprite;
-
             _equipmentSlotList.Add(slot);
         }
     }
@@ -170,5 +191,16 @@ public class EquipmentUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         }
 
         return selectedEquipment;
+    }
+
+    EquipmentSlot _GetSelectedEquipmentSlot(GameObject selector)
+    {
+        EquipmentSlot selectedSlot = null;
+        foreach (EquipmentSlot slot in _equipmentSlotList)
+        {
+            if (slot.uiObject == selector.transform.parent.gameObject)
+                selectedSlot = slot;
+        }
+        return selectedSlot;
     }
 }
