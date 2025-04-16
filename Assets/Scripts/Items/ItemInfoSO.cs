@@ -28,6 +28,14 @@ public class WeaponInfoSO : EquipmentInfoSO
     public float damage;
 }
 
+[CreateAssetMenu(fileName = "ArmorInfoSO", menuName = "ScriptableObjects/ArmorInfoSO")]
+public class ArmorInfoSO : EquipmentInfoSO
+{
+    public Sprite itemSprite2;
+    public Sprite itemSprite3;
+    public float armor;
+}
+
 [CreateAssetMenu(fileName = "ShieldInfoSO", menuName = "ScriptableObjects/ShieldInfoSO")]
 public class ShieldInfoSO : EquipmentInfoSO
 {

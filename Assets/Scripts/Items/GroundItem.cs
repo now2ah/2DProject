@@ -4,8 +4,6 @@ public class GroundItem : MonoBehaviour
 {
     public static float LOOT_DISTANCE = 2.0f;
 
-    static float nearestDistance = Mathf.Infinity;
-
     Item _item;
     SpriteRenderer _spriteRenderer;
 

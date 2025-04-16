@@ -3,21 +3,29 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 using Unity.VisualScripting;
+
+public class InventorySlot
+{
+    public Item containedItem;
+    public GameObject uiObject;
+    public Sprite itemSprite;
+}
 
 public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
     public InputManagerSO inputManager;
+    public EquipmentUI equipmentUI;
 
-    public List<GameObject> inventorySlotList;
-
+    List<InventorySlot> _inventorySlotList;
     List<Item> _itemList;
 
-    Item _clickedItem;
+    Item _selectedItem;
+    ItemCursorSpriteUI _itemCursorSprite;
 
     private void Awake()
     {
+        _inventorySlotList = new List<InventorySlot>();
         _itemList = new List<Item>();
     }
 
@@ -27,48 +35,45 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         _RefreshInventoryUI();
     }
 
+    void OnDisable()
+    {
+        _UnSetInventorySlots();
+        _UnSubscribeEvent();
+    }
+
     public void OnPointerUp(PointerEventData eventData)
     {
+        RaycastResult hit = eventData.pointerCurrentRaycast;
 
+        _DestroyCursorImage();
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         RaycastResult hit = eventData.pointerCurrentRaycast;
-        Debug.Log(hit.gameObject);
+
+        if (_IsItemInventorySlot(hit.gameObject))
+        {
+            _selectedItem = _GetSelectedItem(hit.gameObject);
+
+            _itemCursorSprite = UIManager.Instance.CreateCursorImage();
+            _itemCursorSprite.SetSprite(_selectedItem.ItemInfo.itemSprite);
+        }
     }
 
     void _SubscribeEvent()
     {
-        //inputManager.OnPointPerformed += _OnPointPerformed;
-        //inputManager.OnClickStarted += _OnClickStarted;
-        //inputManager.OnClickPerformed += _OnClickPerformed;
-        //inputManager.OnClickCanceled += _OnClickCanceled;
-
         if (null == GameManager.Instance.Player) { return; }
 
         GameManager.Instance.Player.OnLoot += Player_OnLoot;
     }
 
-    //private void _OnPointPerformed(object sender, Vector2 e)
-    //{
+    void _UnSubscribeEvent()
+    {
+        if (null == GameManager.Instance.Player) { return; }
 
-    //}
-
-    //private void _OnClickStarted(object sender, EventArgs e)
-    //{
-    //    Debug.Log("OnClick");
-    //}
-
-    //private void _OnClickPerformed(object sender, EventArgs e)
-    //{
-
-    //}
-
-    //private void _OnClickCanceled(object sender, EventArgs e)
-    //{
-        
-    //}
+        GameManager.Instance.Player.OnLoot -= Player_OnLoot;
+    }
 
     private void Player_OnLoot(object sender, Vector3 e)
     {
@@ -78,6 +83,9 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     void _RefreshInventoryUI()
     {
         _itemList = _GetPlayersItemList();
+
+        _SetInventorySlots(_itemList);
+
         _ShowItemList();
     }
 
@@ -90,20 +98,72 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         else { return null; }
     }
 
+    void _SetInventorySlots(List<Item> itemList)
+    {
+        if (null == itemList || itemList.Count == 0)
+            return;
+
+        for (int i = 0; i < itemList.Count; ++i)
+        {
+            InventorySlot slot = new InventorySlot();
+            slot.containedItem = itemList[i];
+            slot.uiObject = transform.GetChild(i).gameObject;
+            slot.itemSprite = itemList[i].ItemInfo.itemSprite;
+
+            _inventorySlotList.Add(slot);
+        }
+    }
+
+    void _UnSetInventorySlots()
+    {
+        if (null == _inventorySlotList || _inventorySlotList.Count == 0)
+            return;
+
+        _inventorySlotList.Clear();
+    }
+
     void _ShowItemList()
     {
-        for (int i=0; i<_itemList.Count; ++i)
+        foreach (InventorySlot slot in _inventorySlotList)
         {
-            if (i < inventorySlotList.Count)    //temp code before implement inventory scroll view
+            Transform imageTransform = slot.uiObject.transform.GetChild(0);
+            if (imageTransform.gameObject.TryGetComponent<Image>(out Image image))
             {
-                if (inventorySlotList[i].transform.GetChild(0).TryGetComponent<UnityEngine.UI.Image>(out UnityEngine.UI.Image image))
-                {
-                    if (null == _itemList[i]) { break; }
-
-                    image.sprite = _itemList[i].ItemInfo.itemSprite;
-                    image.gameObject.SetActive(true);
-                }
+                image.sprite = slot.itemSprite;
+                slot.uiObject.transform.GetChild(0).gameObject.SetActive(true);
             }
         }
+    }
+
+    bool _IsItemInventorySlot(GameObject selector)
+    {
+        foreach(InventorySlot slot in _inventorySlotList)
+        {
+            if (slot.uiObject == selector.transform.parent.gameObject)
+                return true;
+        }
+
+        return false;
+    }
+
+    Item _GetSelectedItem(GameObject selector)
+    {
+        Item selectedItem = null;
+
+        foreach (InventorySlot slot in _inventorySlotList)
+        {
+            if (slot.uiObject == selector.transform.parent.gameObject)
+                selectedItem = slot.containedItem;
+        }
+
+        return selectedItem;
+    }
+
+    void _DestroyCursorImage()
+    {
+        if (null == _itemCursorSprite)
+            return;
+
+        Destroy(_itemCursorSprite.gameObject);
     }
 }

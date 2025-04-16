@@ -5,7 +5,12 @@ using UnityEngine;
 
 public partial class Player : MonoBehaviour
 {
-    public static int MAX_EQUIPMENT_SLOT = 5;
+    public static int MAX_EQUIPMENT_SLOT = 4;
+
+    [SerializeField] private GameObject _HeadSlot;
+    [SerializeField] private GameObject _WeaponSlot;
+    [SerializeField] private GameObject _ArmorSlot;
+    [SerializeField] private GameObject _ShieldSlot;
 
     [SerializeField] Equipment[] _equipments;
     [SerializeField] List<Item> _inventoryItemList;
@@ -61,7 +66,7 @@ public partial class Player : MonoBehaviour
 
     void _UpdateEquipmentSprites()
     {
-        SpriteRenderer weaponSlotSprite = _RWeaponSlot.GetComponent<SpriteRenderer>();
+        SpriteRenderer weaponSlotSprite = _WeaponSlot.GetComponent<SpriteRenderer>();
         weaponSlotSprite.sprite = _equipments[(int)EEquipmentType.WEAPON].Item.ItemInfo.itemSprite;
     }
 }

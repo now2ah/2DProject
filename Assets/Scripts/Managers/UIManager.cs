@@ -9,11 +9,15 @@ public class UIManager : Singleton<UIManager>
 {
     public InputManagerSO inputManager;
 
+    public GameObject itemCursorSpritePrefab;   //addressable
+
     [SerializeField] private GameObject _inventoryPanel;
 
-    
+    Canvas _uiCanvas;
+
     private void Awake()
     {
+        _uiCanvas = transform.GetChild(0).GetComponent<Canvas>();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -29,6 +33,19 @@ public class UIManager : Singleton<UIManager>
         inputManager.OnClickStarted += _OnClickStarted;
         inputManager.OnClickPerformed += _OnClickPerformed;
         inputManager.OnClickCanceled += _OnClickCanceled;
+    }
+
+    public ItemCursorSpriteUI CreateCursorImage()
+    {
+        ItemCursorSpriteUI itemCursorSpriteUI = null;
+        GameObject itemCursorSpriteObj = Instantiate(itemCursorSpritePrefab);
+        itemCursorSpriteObj.transform.SetParent(_uiCanvas.transform);
+        if (itemCursorSpriteObj.TryGetComponent<ItemCursorSpriteUI>(out ItemCursorSpriteUI itemCursorSpriteComponent))
+        {
+            itemCursorSpriteUI = itemCursorSpriteComponent;
+        }
+
+        return itemCursorSpriteUI;
     }
 
     private void _OnPointPerformed(object sender, Vector2 e)

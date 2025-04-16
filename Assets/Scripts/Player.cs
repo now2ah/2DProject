@@ -26,14 +26,6 @@ public partial class Player : MonoBehaviour
     private bool _isWalking = false;
     private bool _isAttacking = false;
 
-    [SerializeField] private GameObject _LWeaponSlot;
-    [SerializeField] private GameObject _LShieldSlot;
-    [SerializeField] private GameObject _RWeaponSlot;
-    [SerializeField] private GameObject _RShieldSlot;
-
-    //equipment
-    private Weapon _weaponSlot;
-
     public event EventHandler<Vector3> OnLoot;
     public event EventHandler OnEquip;
 
@@ -108,6 +100,10 @@ public partial class Player : MonoBehaviour
         _LootItemOnGround();
     }
 
+    public void Initialize()
+    {
+    }
+
     public void Attack()
     {
         if (_isAttacking) { return; }
@@ -174,10 +170,10 @@ public partial class Player : MonoBehaviour
         yield return null;
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
 
-        if (_weaponSlot != null)
-        {
-            _weaponSlot.PlayAttackEffect(_isLookRight);
-        }
+        //if (_WeaponSlot != null)
+        //{
+        //    _WeaponSlot.PlayAttackEffect(_isLookRight);
+        //}
 
         if (stateInfo.IsName("0_Attack_Normal"))
         {

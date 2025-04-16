@@ -16,9 +16,8 @@ public enum EEquipmentType
 {
     HEAD,
     WEAPON,
-    UPPER_ARMOR,
+    ARMOR,
     SHIELD,
-    LOWER_ARMOR,
 }
 
 public enum EWeaponType

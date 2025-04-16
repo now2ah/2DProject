@@ -2356,6 +2356,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2927173080740748194, guid: 06f1afca5b590bb419d498c06dbeefe5, type: 3}
+      propertyPath: _itemCursorSpritePrefab
+      value: 
+      objectReference: {fileID: 7412967218308549758, guid: c0aa340036713ca49aa698ef412f5f95, type: 3}
     - target: {fileID: 3182721352372460579, guid: 06f1afca5b590bb419d498c06dbeefe5, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
