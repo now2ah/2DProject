@@ -359,12 +359,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 7134703860308655864}
-  equipmentSlots:
-  - {fileID: 1788109047247865379}
-  - {fileID: 7363213301860253785}
-  - {fileID: 49208148867317753}
-  - {fileID: 1896549166328589187}
-  - {fileID: 0}
 --- !u!222 &6264421216019424103
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2591,6 +2585,7 @@ GameObject:
   - component: {fileID: 3008135556220426864}
   - component: {fileID: 8593892841673296769}
   - component: {fileID: 36511676648112983}
+  - component: {fileID: 7246647550751560881}
   m_Layer: 5
   m_Name: InventoryPanel
   m_TagString: Untagged
@@ -2657,6 +2652,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7246647550751560881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4499420423998978329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 472dc79419b35f54dae70721cc52efad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4629504886555229627
 GameObject:
   m_ObjectHideFlags: 0

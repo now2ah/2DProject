@@ -31,6 +31,26 @@ public partial class Player : MonoBehaviour
         //_Equip(item);
     }
 
+    public void EquipItem(Item item)
+    {
+        _Equip(item);
+    }
+
+    public void UnEquipItem(Item item)
+    {
+        _UnEquip(item);
+    }
+
+    public void AddItemToInventory(Item item)
+    {
+        _Add(item);
+    }
+
+    public void RemoveItemFromInventory(Item item)
+    {
+        _Remove(item);
+    }
+
     void _LootItemOnGround()
     {
         OnLoot?.Invoke(this, transform.position);
@@ -62,6 +82,45 @@ public partial class Player : MonoBehaviour
         _UpdateEquipmentSprites();
     }
 
+    void _UnEquip(Item item)
+    {
+        if (null == item)
+            return;
+
+        for (int i=0; i<_equipments.Length; ++i)
+        {
+            if (null == _equipments[i])
+                continue;
+
+            if (item == _equipments[i].Item)
+            {
+                _equipments[i] = null;
+                break;
+            }
+        }
+
+        _UpdateEquipmentSprites();
+    }
+
+    void _Add(Item item)
+    {
+        if (null == item || null == _inventoryItemList)
+            return;
+
+        _inventoryItemList.Add(item);
+    }
+
+    void _Remove(Item item)
+    {
+        if (null == item || null == _inventoryItemList)
+            return;
+
+        if (_inventoryItemList.Contains(item))
+        {
+            _inventoryItemList.Remove(item);
+        }
+    }
+
     bool _IsEquipmentEmpty(EEquipmentType type)
     {
         if (_equipments[(int)type] == null)
@@ -76,7 +135,7 @@ public partial class Player : MonoBehaviour
 
     void _UpdateEquipmentSprites()
     {
-        if (null == _headSlot || null == _weaponSlot || null == _armorSlot || null == _shieldSlot || 
+        if (null == _headSlot || null == _weaponSlot || null == _armorSlot || null == _shieldSlot ||
             null == _armorLSlot || null == _armorRSlot)
             return;
 
@@ -90,6 +149,11 @@ public partial class Player : MonoBehaviour
                 headSpriteRenderer.sprite = headInfo.itemSprite;
             }
         }
+        else
+        {
+            SpriteRenderer headSpriteRenderer = _headSlot.GetComponent<SpriteRenderer>();
+            headSpriteRenderer.sprite = null;
+        }
 
         if (_equipments[(int)EEquipmentType.WEAPON] != null)
         {
@@ -99,6 +163,11 @@ public partial class Player : MonoBehaviour
                 SpriteRenderer weaponSlotSprite = _weaponSlot.GetComponent<SpriteRenderer>();
                 weaponSlotSprite.sprite = weaponInfo.itemSprite;
             }
+        }
+        else
+        {
+            SpriteRenderer weaponSlotSprite = _weaponSlot.GetComponent<SpriteRenderer>();
+            weaponSlotSprite.sprite = null;
         }
 
         if (_equipments[(int)EEquipmentType.ARMOR] != null)
@@ -114,6 +183,15 @@ public partial class Player : MonoBehaviour
                 armorRSlotSprite.sprite = armorInfo.itemSprite3;
             }
         }
+        else
+        {
+            SpriteRenderer armorSlotSprite = _armorSlot.GetComponent<SpriteRenderer>();
+            armorSlotSprite.sprite = null;
+            SpriteRenderer armorLSlotSprite = _armorLSlot.GetComponent<SpriteRenderer>();
+            armorLSlotSprite.sprite = null;
+            SpriteRenderer armorRSlotSprite = _armorRSlot.GetComponent<SpriteRenderer>();
+            armorRSlotSprite.sprite = null;
+        }
 
         if (_equipments[(int)EEquipmentType.SHIELD] != null)
         {
@@ -123,6 +201,11 @@ public partial class Player : MonoBehaviour
                 SpriteRenderer shieldSlotSprite = _shieldSlot.GetComponent<SpriteRenderer>();
                 shieldSlotSprite.sprite = shieldInfo.itemSprite;
             }
+        }
+        else
+        {
+            SpriteRenderer shieldSlotSprite = _shieldSlot.GetComponent<SpriteRenderer>();
+            shieldSlotSprite.sprite = null;
         }
     }
 }

@@ -6,13 +6,11 @@ using UnityEngine.EventSystems;
 using Unity.VisualScripting;
 using UnityEngine.Rendering;
 
-public class InventorySlot
+public class InventorySlot : ItemSlot
 {
     public Item containedItem;
-    public GameObject uiObject;
-    public Sprite itemSprite;
 
-    public void SetSlot(Item item, GameObject go, Sprite sprite)
+    public override void SetSlot(Item item, GameObject go, Sprite sprite)
     {
         containedItem = item;
         uiObject = go;
@@ -20,31 +18,30 @@ public class InventorySlot
     }
 }
 
-public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
+public class InventoryUI : MonoBehaviour
 {
+    static int MAX_INVENTORY_SLOTS = 15;
+
     public InputManagerSO inputManager;
     public EquipmentUI equipmentUI;
 
-    List<Item> _itemList;
-    List<InventorySlot> _inventorySlotList;
-    
-    Item _selectedItem;
-    InventorySlot _selectedSlot;
-    ItemCursorSpriteUI _itemCursorSprite;
+    InventoryUIPointerHandler _pointHandler;
 
-    public Item SelectedItem { get { return _selectedItem; } set { _selectedItem = value; } }
-    public InventorySlot SelectedSlot { get { return _selectedSlot; } set { _selectedSlot = value; } }
+    List<Item> _itemList;
+    InventorySlot[] _inventorySlots;
 
     private void Awake()
     {
-        _inventorySlotList = new List<InventorySlot>();
+        _pointHandler = transform.parent.GetComponent<InventoryUIPointerHandler>();
+
+        _inventorySlots = new InventorySlot[MAX_INVENTORY_SLOTS];
         _itemList = new List<Item>();
     }
 
     private void OnEnable()
     {
         _SubscribeEvent();
-        _RefreshInventoryUI();
+        RefreshInventoryUI();
     }
 
     void OnDisable()
@@ -53,46 +50,60 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         _UnSubscribeEvent();
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public void RefreshInventoryUI()
     {
-        RaycastResult hit = eventData.pointerCurrentRaycast;
+        _itemList = _GetPlayersItemList();
 
-        if (_IsItemInventorySlot(hit.gameObject))
-        {
-            InventorySlot slot = _GetSelectedSlot(hit.gameObject);
+        _SetInventorySlots(_itemList);
 
-            //from inventory
-            if (_selectedSlot != null)
-            {
-                _SwapItemSlot(_selectedItem, slot.containedItem);
-            }
-
-            //from equip
-
-            //refresh
-            _RefreshInventoryUI();
-        }
-
-        _DestroyCursorImage();
+        _ShowItemList();
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public bool IsItemInventorySlot(GameObject selector)
     {
-        RaycastResult hit = eventData.pointerCurrentRaycast;
-
-        if (_IsItemInventorySlot(hit.gameObject))
+        foreach (InventorySlot slot in _inventorySlots)
         {
-            _selectedItem = _GetSelectedItem(hit.gameObject);
-            _selectedSlot = _GetSelectedSlot(hit.gameObject);
-            if (equipmentUI != null)
-            {
-                equipmentUI.SelectedEquipment = _selectedItem;
-                equipmentUI.SelectedSlot = null;
-            }
-
-            _itemCursorSprite = UIManager.Instance.CreateCursorImage();
-            _itemCursorSprite.SetSprite(_selectedItem.ItemInfo.itemSprite);
+            if (slot.uiObject == selector.transform.parent.gameObject)
+                return true;
         }
+
+        return false;
+    }
+
+    public InventorySlot SelectInventoryItem(GameObject selector)
+    {
+        InventorySlot slot = null;
+        _pointHandler.SelectedItem = _GetSelectedItem(selector);
+        slot = _GetSelectedSlot(selector);
+
+        return slot;
+    }
+
+    public void SwapItem(GameObject selector)
+    {
+        if (null == _pointHandler)
+            return;
+
+        InventorySlot slot = _GetSelectedSlot(selector);
+
+        //from inventory
+        if (_pointHandler.SelectedSlot != null)
+        {
+            _SwapItemSlot(_pointHandler.SelectedItem, slot.containedItem);
+        }
+
+        //refresh
+        RefreshInventoryUI();
+    }
+
+    public void UnEquipItem(GameObject selector)
+    {
+        if (null == _pointHandler)
+            return;
+
+        GameManager.Instance.Player.AddItemToInventory(_pointHandler.SelectedItem);
+        GameManager.Instance.Player.UnEquipItem(_pointHandler.SelectedItem);
+
     }
 
     void _SubscribeEvent()
@@ -111,16 +122,7 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     private void Player_OnLoot(object sender, Vector3 e)
     {
-        _RefreshInventoryUI();
-    }
-
-    void _RefreshInventoryUI()
-    {
-        _itemList = _GetPlayersItemList();
-
-        _SetInventorySlots(_itemList);
-
-        _ShowItemList();
+        RefreshInventoryUI();
     }
 
     List<Item> _GetPlayersItemList()
@@ -134,59 +136,76 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     void _SetInventorySlots(List<Item> itemList)
     {
-        if (null == itemList || itemList.Count == 0)
+        if (null == itemList)
             return;
 
-        for (int i = 0; i < itemList.Count; ++i)
+        for (int i = 0; i < _inventorySlots.Length; ++i)
         {
-            InventorySlot slot = new InventorySlot();
-            slot.containedItem = itemList[i];
-            slot.uiObject = transform.GetChild(i).gameObject;
-            slot.itemSprite = itemList[i].ItemInfo.itemSprite;
-
-            _inventorySlotList.Add(slot);
+            if (i < itemList.Count)
+            {
+                InventorySlot slot = new InventorySlot();
+                slot.containedItem = itemList[i];
+                slot.uiObject = transform.GetChild(i).gameObject;
+                slot.itemSprite = itemList[i].ItemInfo.itemSprite;
+                _inventorySlots[i] = slot;
+            }
+            else
+            {
+                InventorySlot slot = new InventorySlot();
+                slot.containedItem = null;
+                slot.uiObject = transform.GetChild(i).gameObject;
+                slot.itemSprite = null;
+                _inventorySlots[i] = slot;
+            }
         }
     }
 
     void _UnSetInventorySlots()
     {
-        if (null == _inventorySlotList || _inventorySlotList.Count == 0)
+        if (null == _inventorySlots || _inventorySlots.Length == 0)
             return;
 
-        _inventorySlotList.Clear();
+        for (int i = 0; i < _inventorySlots.Length; ++i)
+        {
+            _inventorySlots[i] = null;
+        }
     }
 
     void _ShowItemList()
     {
-        foreach (InventorySlot slot in _inventorySlotList)
+        foreach (InventorySlot slot in _inventorySlots)
         {
-            Transform imageTransform = slot.uiObject.transform.GetChild(0);
-            if (imageTransform.gameObject.TryGetComponent<Image>(out Image image))
+            if (slot.containedItem != null)
             {
-                image.sprite = slot.itemSprite;
-                image.SetNativeSize();
-                slot.uiObject.transform.GetChild(0).gameObject.SetActive(true);
+                Transform imageTransform = slot.uiObject.transform.GetChild(0);
+                if (imageTransform.gameObject.TryGetComponent<Image>(out Image image))
+                {
+                    image.sprite = slot.itemSprite;
+                    image.SetNativeSize();
+                    slot.uiObject.transform.GetChild(0).gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                Transform imageTransform = slot.uiObject.transform.GetChild(0);
+                if (imageTransform.gameObject.TryGetComponent<Image>(out Image image))
+                {
+                    image.sprite = null;
+                    slot.uiObject.transform.GetChild(0).gameObject.SetActive(false);
+                }
             }
         }
-    }
-
-    bool _IsItemInventorySlot(GameObject selector)
-    {
-        foreach (InventorySlot slot in _inventorySlotList)
-        {
-            if (slot.uiObject == selector.transform.parent.gameObject)
-                return true;
-        }
-
-        return false;
     }
 
     Item _GetSelectedItem(GameObject selector)
     {
         Item selectedItem = null;
 
-        foreach (InventorySlot slot in _inventorySlotList)
+        foreach (InventorySlot slot in _inventorySlots)
         {
+            if (null == slot)
+                continue;
+
             if (slot.uiObject == selector.transform.parent.gameObject)
                 selectedItem = slot.containedItem;
         }
@@ -198,21 +217,16 @@ public class InventoryUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         InventorySlot selectedSlot = null;
 
-        foreach (InventorySlot slot in _inventorySlotList)
+        foreach (InventorySlot slot in _inventorySlots)
         {
+            if (null == slot)
+                continue;
+
             if (slot.uiObject == selector.transform.parent.gameObject)
                 selectedSlot = slot;
         }
 
         return selectedSlot;
-    }
-
-    void _DestroyCursorImage()
-    {
-        if (null == _itemCursorSprite)
-            return;
-
-        Destroy(_itemCursorSprite.gameObject);
     }
 
     void _SwapItemSlot(Item fromItem, Item destItem)

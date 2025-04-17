@@ -49,8 +49,6 @@ public class ItemCursorSpriteUI : MonoBehaviour
     void _FollowCursor()
     {
         transform.position = new Vector2(_mouseX + _offsetX, _mouseY + _offsetY);
-        Debug.Log("X : " + _mouseX + "Offset : " + _offsetX);
-        Debug.Log("Y : " + _mouseY + "Offset : " + _offsetY);
     }
 
     void Update()
