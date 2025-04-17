@@ -17,18 +17,6 @@ public class GroundItem : MonoBehaviour
     public void Initialize()
     {
         _item = new Item();
-        //if (type == EItemType.NORMAL)
-        //{
-            
-        //}
-        //else if (type == EItemType.EQUIPMENT)
-        //{
-        //    _item = new Equipment();
-        //}
-        //else if (type == EItemType.WEAPON)
-        //{
-        //    _item = new Weapon();
-        //}
 
         _SubscribeEvent();
     }

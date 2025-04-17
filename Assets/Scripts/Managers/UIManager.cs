@@ -12,6 +12,10 @@ public class UIManager : Singleton<UIManager>
     public GameObject itemCursorSpritePrefab;   //addressable
 
     [SerializeField] private GameObject _inventoryPanel;
+    [SerializeField] private GameObject _titlePanel;
+
+    [SerializeField] Button startButton;
+    [SerializeField] Button quitButton;
 
     Canvas _uiCanvas;
 
@@ -23,6 +27,8 @@ public class UIManager : Singleton<UIManager>
 
     private void Start()
     {
+        startButton.onClick.AddListener(_OnStartButton);
+        quitButton.onClick.AddListener(() => { Application.Quit(); });
         SubscribeEvent();
     }
 
@@ -46,6 +52,20 @@ public class UIManager : Singleton<UIManager>
         }
 
         return itemCursorSpriteUI;
+    }
+
+    public void ShowTitlePanel(bool isOn)
+    {
+        if (null == _titlePanel)
+            return;
+
+        _titlePanel.SetActive(isOn);
+    }
+
+    void _OnStartButton()
+    {
+        GameManager.Instance.StartGame();
+        _titlePanel.SetActive(false);
     }
 
     private void _OnPointPerformed(object sender, Vector2 e)

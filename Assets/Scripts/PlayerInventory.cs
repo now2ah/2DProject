@@ -27,8 +27,6 @@ public partial class Player : MonoBehaviour
         {
             _inventoryItemList.Add(item);
         }
-
-        //_Equip(item);
     }
 
     public void EquipItem(Item item)
