@@ -1,3 +1,4 @@
+using Cainos.LucidEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.WSA;
@@ -61,32 +62,44 @@ public class MapDataGenerator : MonoBehaviour
         EXIT
     }
 
-    public int GROUND_Y = 4;
-    public int holePerPartTilemap = 1;
+    [Header("Common")]
     public int xSize = 10;
     public int ySize = 10;
 
-    TilemapData _tilemapData;
+    [Header("Entrance")]
+    public int flatTileOfEntrance = 4;
 
-    public TilemapData GenerateTilemap(EMapDataType type)
+    [Header("Height")]
+    public int holePerPartTilemap = 2;
+    public float intense = 0.2f;
+
+    [Header("Exit")]
+    public int flatTileOfExit = 4;
+
+    TilemapData _tilemapData;
+    int _currentHeight = -1;
+
+    public int CurrentHeight => _currentHeight;
+
+    public TilemapData GenerateTilemap(EMapDataType type, int startHeight)
     {
         _tilemapData = _GenerateNewTilemap(ySize, xSize);
 
         if (type == EMapDataType.ENTRANCE)
         {
-            _GenerateEntranceTilemapData(_tilemapData);
+            _currentHeight = _GenerateEntranceTilemapData(_tilemapData, startHeight, flatTileOfEntrance);
         }
         else if (type == EMapDataType.FLAT_TERRAIN)
         {
-            _GenerateFlatTerrainTilemapData(_tilemapData);
+            _currentHeight = _GenerateFlatTerrainTilemapData(_tilemapData, startHeight);
         }
         else if (type == EMapDataType.HEIGHT_TERRAIN)
         {
-            _GenerateHeightTerrainTilemapData(_tilemapData);
+            _currentHeight = _GenerateHeightTerrainTilemapData(_tilemapData, startHeight, intense, holePerPartTilemap);
         }
         else if (type == EMapDataType.EXIT)
         {
-            _GenerateExitTilemapData(_tilemapData);
+            _GenerateExitTilemapData(_tilemapData, startHeight, flatTileOfExit);
         }
 
         return _tilemapData;
@@ -98,21 +111,38 @@ public class MapDataGenerator : MonoBehaviour
         return tilemapData;
     }
 
-    void _GenerateEntranceTilemapData(TilemapData tilemapData)
+    int _GenerateEntranceTilemapData(TilemapData tilemapData, int startHeight, int entrance)
     {
-        for (int i = 0; i < tilemapData.YSize; ++i)
+        int height = startHeight;
+
+        for (int i = 0; i < tilemapData.XSize; ++i)
         {
-            for (int j = 0; j < tilemapData.XSize; ++j)
+            //block end
+            if (i == 0)
             {
-                if (j == 0 || i <= GROUND_Y)
-                {
-                    tilemapData.SetData(j, i, 1);
-                }
+                height = tilemapData.YSize - 1;
+            }
+            //make entrance flat
+            else if (i <= entrance)
+            {
+                height = startHeight;
+            }
+            else if (i > entrance)
+            {
+                int addValue = Random.Range(-1, 2);
+                height = Mathf.Clamp(height + addValue, 0, tilemapData.YSize);
+            }
+
+            for (int j = height; j >= 0; --j)
+            {
+                tilemapData.SetData(i, j, 1);
             }
         }
+
+        return height;
     }
 
-    void _GenerateFlatTerrainTilemapData(TilemapData tilemapData, bool isHole = false)
+    int _GenerateFlatTerrainTilemapData(TilemapData tilemapData, int startHeight, bool isHole = false)
     {
         int holeX = -1;
         if (isHole)
@@ -124,39 +154,82 @@ public class MapDataGenerator : MonoBehaviour
         {
             for (int j = 0; j < tilemapData.XSize; ++j)
             {
-                if (i <= GROUND_Y && j != holeX)
+                if (i <= startHeight && j != holeX)
                 {
                     tilemapData.SetData(j, i, 1);
                 }
             }
         }
+
+        return startHeight;
     }
 
-    void _GenerateHeightTerrainTilemapData(TilemapData tilemapData)
+    int _GenerateHeightTerrainTilemapData(TilemapData tilemapData, int startHeight, float intense, int holePerTilemap)
     {
-        int height = GROUND_Y;
+        int[] holeXs = new int[holePerPartTilemap];
+        for (int i=0; i<holePerPartTilemap; ++i)
+        {
+            holeXs[i] = Random.Range(0, xSize);
+        }
+
+        int height = startHeight;
         for (int i = 0; i < tilemapData.XSize; ++i)
         {
-            int addValue = Random.Range(-1, 2);
-            height = Mathf.Clamp(height + addValue, 0, tilemapData.YSize);
+            int paint = 1;
+
+            if (Random.value < intense)
+            {
+                int addValue = Random.Range(-1, 2);
+                height = Mathf.Clamp(height + addValue, 0, tilemapData.YSize);
+            }
+            
+            for (int j=0; j<holePerPartTilemap; ++j)
+            {
+                if (i == holeXs[j])
+                {
+                    paint = 0;
+                    break;
+                }  
+                else
+                {
+                    paint = 1;
+                } 
+            }
+
+            for (int j = height; j >= 0; --j)
+            {
+                tilemapData.SetData(i, j, paint);
+            }
+        }
+
+        return height;
+    }
+
+    void _GenerateExitTilemapData(TilemapData tilemapData, int startHeight, int exit)
+    {
+        int height = startHeight;
+
+        for (int i = 0; i < tilemapData.XSize; ++i)
+        {
+            //block end
+            if (i == tilemapData.XSize - 1)
+            {
+                height = tilemapData.YSize - 1;
+            }
+            //make exit flat
+            else if (i >= exit)
+            {
+                height = startHeight;
+            }
+            else if (i < exit)
+            {
+                int addValue = Random.Range(-1, 2);
+                height = Mathf.Clamp(height + addValue, 0, tilemapData.YSize);
+            }
 
             for (int j = height; j >= 0; --j)
             {
                 tilemapData.SetData(i, j, 1);
-            }
-        }
-    }
-
-    void _GenerateExitTilemapData(TilemapData tilemapData)
-    {
-        for (int i = 0; i < tilemapData.YSize; ++i)
-        {
-            for (int j = 0; j < tilemapData.XSize; ++j)
-            {
-                if (j == tilemapData.XSize - 1 || i <= GROUND_Y)
-                {
-                    tilemapData.SetData(j, i, 1);
-                }
             }
         }
     }

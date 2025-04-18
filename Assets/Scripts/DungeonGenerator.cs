@@ -4,7 +4,8 @@ using UnityEngine.Tilemaps;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public int dungeonLength = 3;
+    public int GROUND_Y = 4;
+    public int dungeonLength = 1;
     public TileBase ruleTile;
 
     GameObject _gridObject;
@@ -29,9 +30,14 @@ public class DungeonGenerator : MonoBehaviour
         _tileMap.ClearAllTiles();
         _dungeonTilemapData.Clear();
 
-        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.ENTRANCE));
-        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.FLAT_TERRAIN));
-        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.EXIT));
+        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.ENTRANCE, GROUND_Y));
+
+        for (int i=0; i<dungeonLength; ++i)
+        {
+            _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.HEIGHT_TERRAIN, _mapDataGenerator.CurrentHeight));
+        }
+
+        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.EXIT, _mapDataGenerator.CurrentHeight));
 
         for (int i=0; i<_dungeonTilemapData.Count; ++i)
         {
