@@ -1,0 +1,85 @@
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.Tilemaps;
+
+public class DungeonGenerator : MonoBehaviour
+{
+    public int dungeonLength = 3;
+    public TileBase ruleTile;
+
+    GameObject _gridObject;
+    Grid _grid;
+    
+    GameObject _tilemapObject;
+    Tilemap _tileMap;
+
+    MapDataGenerator _mapDataGenerator;
+    List<TilemapData> _dungeonTilemapData;
+
+    public void GenerateDungeon()
+    {
+        _Initialize();
+
+        //generate entrance tilemap
+        //generate middle tilemap
+        //generate exit tilemap
+        //merge tilemaps
+        //add entrance, exit
+        //add monsters
+        _tileMap.ClearAllTiles();
+        _dungeonTilemapData.Clear();
+
+        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.ENTRANCE));
+        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.FLAT_TERRAIN));
+        _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.EXIT));
+
+        for (int i=0; i<_dungeonTilemapData.Count; ++i)
+        {
+            _PaintTiles(_tileMap, _dungeonTilemapData[i], i, ruleTile);
+        }
+    }
+
+    void _Initialize()
+    {
+        _mapDataGenerator = GetComponent<MapDataGenerator>();
+        if (null == _dungeonTilemapData)
+            _dungeonTilemapData = new List<TilemapData>();
+        _GenerateGrid();
+        _GenerateTilemap();
+    }
+
+    void _GenerateGrid()
+    {
+        if (null == _gridObject)
+        {
+            _gridObject = new GameObject();
+            _gridObject.name = "Grid";
+            _grid = _gridObject.AddComponent<Grid>();
+        }
+    }
+
+    void _GenerateTilemap()
+    {
+        if (null == _tilemapObject)
+        {
+            _tilemapObject = new GameObject();
+            _tilemapObject.name = "Tilemap";
+            _tileMap = _tilemapObject.AddComponent<Tilemap>();
+            _tilemapObject.AddComponent<TilemapRenderer>();
+            _tilemapObject.AddComponent<TilemapCollider2D>();
+            _tilemapObject.transform.SetParent(_gridObject.transform);
+        }
+    }
+
+    void _PaintTiles(Tilemap tilemap, TilemapData tilemapData, int offset, TileBase tile)
+    {
+        for (int i = 0; i < tilemapData.YSize; ++i)
+        {
+            for (int j = 0; j < tilemapData.XSize; ++j)
+            {
+                if (tilemapData.GetData(i, j) == 1)
+                    tilemap.SetTile(new Vector3Int(i + (tilemapData.XSize * offset), j), tile);
+            }
+        }
+    }
+}
