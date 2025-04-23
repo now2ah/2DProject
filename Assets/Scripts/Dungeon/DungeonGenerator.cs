@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
+using Unity.VisualScripting;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class DungeonGenerator : MonoBehaviour
     
     GameObject _tilemapObject;
     Tilemap _tileMap;
+
+    TilemapCollider2D _tilemapCollider2d;
+    CompositeCollider2D _compositeCollider2d;
+    Rigidbody2D _rigidbody2d;
 
     MapDataGenerator _mapDataGenerator;
     List<TilemapData> _dungeonTilemapData;
@@ -43,6 +48,13 @@ public class DungeonGenerator : MonoBehaviour
         {
             _PaintTiles(_tileMap, _dungeonTilemapData[i], i, ruleTile);
         }
+
+        _tilemapCollider2d = _tileMap.GetComponent<TilemapCollider2D>();
+        _compositeCollider2d = _tileMap.AddComponent<CompositeCollider2D>();
+        _rigidbody2d = _tileMap.GetComponent<Rigidbody2D>();
+
+        _tilemapCollider2d.compositeOperation = Collider2D.CompositeOperation.Merge;
+        _rigidbody2d.bodyType = RigidbodyType2D.Static;
     }
 
     void _Initialize()
@@ -50,6 +62,7 @@ public class DungeonGenerator : MonoBehaviour
         _mapDataGenerator = GetComponent<MapDataGenerator>();
         if (null == _dungeonTilemapData)
             _dungeonTilemapData = new List<TilemapData>();
+
         _GenerateGrid();
         _GenerateTilemap();
     }

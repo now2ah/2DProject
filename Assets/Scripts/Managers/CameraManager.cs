@@ -5,6 +5,7 @@ public class CameraManager : Singleton<CameraManager>
 {
     public Camera mainCamera;
     public CinemachineCamera cinemachineCamera;
+    public CinemachinePositionComposer cinemachinePositionComposer;
     public CinemachineConfiner2D cinemachineConfiner2D;
     public GameObject trackingTarget;
 
@@ -20,6 +21,7 @@ public class CameraManager : Singleton<CameraManager>
     private void Start()
     {
         GameManager.Instance.OnStartGame += _OnStartGame;
+        _Initialize();
     }
 
     private void Update()
@@ -51,5 +53,13 @@ public class CameraManager : Singleton<CameraManager>
             return;
 
         cinemachineConfiner2D.BoundingShape2D = GameObject.FindGameObjectWithTag("CameraBound").GetComponent<Collider2D>();
+    }
+
+    void _Initialize()
+    {
+        if (cinemachinePositionComposer != null)
+        {
+            cinemachinePositionComposer.TargetOffset.y = 1f;
+        }
     }
 }

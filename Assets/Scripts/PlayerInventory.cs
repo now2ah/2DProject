@@ -26,6 +26,16 @@ public partial class Player : MonoBehaviour
         if (_inventoryItemList != null)
         {
             _inventoryItemList.Add(item);
+
+            //if player has not equipment, equip automatically
+            if (item.ItemInfo.itemType == EItemType.EQUIPMENT)
+            {
+                if (_IsEquipmentEmpty(((EquipmentInfoSO)item.ItemInfo).equipmentType))
+                {
+                    _Equip(item);
+                    _Remove(item);
+                }
+            }
         }
     }
 

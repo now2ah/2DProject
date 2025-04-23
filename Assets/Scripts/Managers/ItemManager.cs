@@ -17,6 +17,7 @@ public class ItemManager : Singleton<ItemManager>
     private void Awake()
     {
         _itemInfoDic = new Dictionary<string, ItemInfoSO>();
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

@@ -11,11 +11,23 @@ public class UIManager : Singleton<UIManager>
 
     public GameObject itemCursorSpritePrefab;   //addressable
 
-    [SerializeField] private GameObject _inventoryPanel;
-    [SerializeField] private GameObject _titlePanel;
+    [SerializeField] GameObject _inventoryPanel;
+    [SerializeField] GameObject _titlePanel;
+    [SerializeField] GameObject _inGamePanel;
 
     [SerializeField] Button startButton;
     [SerializeField] Button quitButton;
+
+    [SerializeField] GameObject tutorialMove;
+    [SerializeField] GameObject tutorialLoot;
+    [SerializeField] GameObject tutorialAttack;
+    [SerializeField] GameObject tutorialJump;
+
+    public GameObject TutorialMove => tutorialMove;
+    public GameObject TutorialLoot => tutorialLoot;
+    public GameObject TutorialAttack => tutorialAttack;
+    public GameObject TutorialJump => tutorialJump;
+
 
     Canvas _uiCanvas;
 
@@ -39,6 +51,12 @@ public class UIManager : Singleton<UIManager>
         inputManager.OnClickStarted += _OnClickStarted;
         inputManager.OnClickPerformed += _OnClickPerformed;
         inputManager.OnClickCanceled += _OnClickCanceled;
+        GameManager.Instance.OnStartGame += _OnStartGame;
+    }
+
+    private void _OnStartGame(object sender, EventArgs e)
+    {
+        ShowUI(_inGamePanel);
     }
 
     public ItemCursorSpriteUI CreateCursorImage()
@@ -60,6 +78,34 @@ public class UIManager : Singleton<UIManager>
             return;
 
         _titlePanel.SetActive(isOn);
+    }
+
+    public void ShowUIAtPosition(GameObject ui, Vector3 position)
+    {
+        if (ui != null)
+        {
+            ui.SetActive(true);
+            if (ui.TryGetComponent<RectTransform>(out RectTransform rectTr))
+            {
+                rectTr.anchoredPosition = position;
+            }
+        }
+    }
+
+    public void ShowUI(GameObject ui)
+    {
+        if (ui != null)
+        {
+            ui.SetActive(true);
+        }
+    }
+
+    public void HideUI(GameObject ui)
+    {
+        if (ui != null)
+        {
+            ui.SetActive(false);
+        }
     }
 
     void _OnStartButton()

@@ -8,8 +8,20 @@ using UnityEngine.Windows;
 
 public partial class Player : MonoBehaviour
 {
+    public int maxHP = 100;
+
+    private int _level = 1;
+    private int _currentHP;
+    private int _nextExp = 100;
+    private int _currentExp = 0;
+
+    public int Level => _level;
+    public int CurrentHP => _currentHP;
+    public int NextExp => _nextExp;
+    public int CurrentExp => _currentExp;
+
     public float moveSpeed = 5.0f;
-    public float jumpForce = 7.0f;
+    public float jumpForce = 5.5f;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
@@ -28,6 +40,7 @@ public partial class Player : MonoBehaviour
 
     public event EventHandler<Vector3> OnLoot;
     public event EventHandler OnEquip;
+    public event EventHandler OnStatChanged;
 
     //temp
     public ItemInfoSO startArmorItemInfo;
@@ -38,6 +51,14 @@ public partial class Player : MonoBehaviour
         _animator = GetComponent<Animator>();
         _equipments = new Equipment[MAX_EQUIPMENT_SLOT];
         _inventoryItemList = new List<Item>();
+        _currentHP = maxHP;
+
+        GameManager.Instance.OnStartGame += GameManager_OnStartGame;
+    }
+
+    private void GameManager_OnStartGame(object sender, EventArgs e)
+    {
+        OnStatChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void Update()
@@ -174,10 +195,10 @@ public partial class Player : MonoBehaviour
         yield return null;
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
 
-        //if (_WeaponSlot != null)
-        //{
-        //    _WeaponSlot.PlayAttackEffect(_isLookRight);
-        //}
+        if (_equipments[(int)EEquipmentType.WEAPON] != null)
+        {
+            ((Weapon)_equipments[(int)EEquipmentType.WEAPON]).PlayAttackEffect(_isLookRight);
+        }
 
         if (stateInfo.IsName("0_Attack_Normal"))
         {

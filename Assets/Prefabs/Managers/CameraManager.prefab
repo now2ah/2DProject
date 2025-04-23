@@ -49,6 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 4768946393140486096}
   cinemachineCamera: {fileID: 3472100038326697923}
+  cinemachinePositionComposer: {fileID: 3358547480896205741}
   cinemachineConfiner2D: {fileID: 8356745665316576627}
   trackingTarget: {fileID: 7690179842805466035}
 --- !u!1 &7690179842805466035
