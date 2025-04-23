@@ -1,0 +1,18 @@
+using UnityEngine;
+
+public class DungeonScene : MonoBehaviour
+{
+    public DungeonGenerator dungeonGenerator;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        if (dungeonGenerator != null)
+        {
+            dungeonGenerator.GenerateDungeon(() =>
+            {
+                GameManager.Instance.Player.transform.position = dungeonGenerator.PlayerStartPosition;
+            });
+        }
+    }
+}

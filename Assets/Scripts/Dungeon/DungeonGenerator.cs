@@ -1,13 +1,24 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
-using Unity.VisualScripting;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public int GROUND_Y = 4;
+    [SerializeField] Vector3 _playerStartPosition;
+    [SerializeField] Vector3 _exitPortalPosition;
+
+    public Vector3 PlayerStartPosition => _playerStartPosition;
+
+    public GameObject portalStonePrefab;
+    GameObject _portalStone;
+
+    public int GROUND_Y = 10;
     public int dungeonLength = 1;
     public TileBase ruleTile;
+
+    int _exitY;
+    public int EXIT_Y => _exitY;
 
     GameObject _gridObject;
     Grid _grid;
@@ -22,7 +33,7 @@ public class DungeonGenerator : MonoBehaviour
     MapDataGenerator _mapDataGenerator;
     List<TilemapData> _dungeonTilemapData;
 
-    public void GenerateDungeon()
+    public void GenerateDungeon(Action callback = null)
     {
         _Initialize();
 
@@ -34,6 +45,10 @@ public class DungeonGenerator : MonoBehaviour
         //add monsters
         _tileMap.ClearAllTiles();
         _dungeonTilemapData.Clear();
+        if (_portalStone != null)
+        {
+            Destroy(_portalStone);
+        }
 
         _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.ENTRANCE, GROUND_Y));
 
@@ -44,17 +59,25 @@ public class DungeonGenerator : MonoBehaviour
 
         _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.EXIT, _mapDataGenerator.CurrentHeight));
 
+        _exitY = _mapDataGenerator.CurrentHeight;
+
         for (int i=0; i<_dungeonTilemapData.Count; ++i)
         {
             _PaintTiles(_tileMap, _dungeonTilemapData[i], i, ruleTile);
         }
 
         _tilemapCollider2d = _tileMap.GetComponent<TilemapCollider2D>();
-        _compositeCollider2d = _tileMap.AddComponent<CompositeCollider2D>();
+        _compositeCollider2d = _tilemapObject.AddComponent<CompositeCollider2D>();
         _rigidbody2d = _tileMap.GetComponent<Rigidbody2D>();
 
         _tilemapCollider2d.compositeOperation = Collider2D.CompositeOperation.Merge;
         _rigidbody2d.bodyType = RigidbodyType2D.Static;
+
+        _playerStartPosition = new Vector3(3f, GROUND_Y + 1);
+        _exitPortalPosition = new Vector3((_mapDataGenerator.xSize * 2) + (_mapDataGenerator.xSize * dungeonLength) - 3f, _exitY + 1);
+
+        _portalStone = Instantiate(portalStonePrefab, _exitPortalPosition, Quaternion.identity);
+        callback?.Invoke();
     }
 
     void _Initialize()
@@ -87,6 +110,7 @@ public class DungeonGenerator : MonoBehaviour
             _tilemapObject.AddComponent<TilemapRenderer>();
             _tilemapObject.AddComponent<TilemapCollider2D>();
             _tilemapObject.transform.SetParent(_gridObject.transform);
+            _tilemapObject.layer = LayerMask.NameToLayer("Ground");
         }
     }
 

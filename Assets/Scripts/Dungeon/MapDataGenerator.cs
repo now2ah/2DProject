@@ -10,8 +10,12 @@ public class TilemapData
 
     int[,] _tileData;
 
+    int lastY;
+
     public int XSize => _xSize;
     public int YSize => _ySize;
+
+    public int LastY => lastY;
 
     public TilemapData(int xSize, int ySize)
     {
@@ -99,7 +103,7 @@ public class MapDataGenerator : MonoBehaviour
         }
         else if (type == EMapDataType.EXIT)
         {
-            _GenerateExitTilemapData(_tilemapData, startHeight, flatTileOfExit);
+            _currentHeight = _GenerateExitTilemapData(_tilemapData, startHeight, flatTileOfExit);
         }
 
         return _tilemapData;
@@ -205,9 +209,10 @@ public class MapDataGenerator : MonoBehaviour
         return height;
     }
 
-    void _GenerateExitTilemapData(TilemapData tilemapData, int startHeight, int exit)
+    int _GenerateExitTilemapData(TilemapData tilemapData, int startHeight, int exit)
     {
         int height = startHeight;
+        int exitHeight = 0;
 
         for (int i = 0; i < tilemapData.XSize; ++i)
         {
@@ -220,6 +225,7 @@ public class MapDataGenerator : MonoBehaviour
             else if (i >= exit)
             {
                 height = startHeight;
+                exitHeight = height;
             }
             else if (i < exit)
             {
@@ -232,5 +238,7 @@ public class MapDataGenerator : MonoBehaviour
                 tilemapData.SetData(i, j, 1);
             }
         }
+
+        return exitHeight;
     }
 }

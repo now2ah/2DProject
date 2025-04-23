@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Grassy_Top_0: 6738797532551933342
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

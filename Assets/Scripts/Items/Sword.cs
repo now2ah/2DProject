@@ -30,6 +30,8 @@ public class Sword : Weapon
     {
         GameObject effectObj = Instantiate(_attackEffectPrefab, transform.position + offset, direction);
         Animator animator = effectObj.GetComponent<Animator>();
+        AttackEffect attackEffect = effectObj.GetComponent<AttackEffect>();
+        attackEffect.damage = ((WeaponInfoSO)Item.ItemInfo).damage;
         float effectTime = animator.GetCurrentAnimatorStateInfo(0).length;
         yield return new WaitForSeconds(effectTime);
         Destroy(effectObj);

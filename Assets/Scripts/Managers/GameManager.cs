@@ -39,6 +39,7 @@ public class GameManager : Singleton<GameManager>
         if (null == _player)
         {
             _player = Instantiate(playerPrefab, playerStartPosition, Quaternion.identity).GetComponent<Player>();
+            _player.transform.SetParent(transform);
             OnStartGame?.Invoke(this, EventArgs.Empty);
         }
     }

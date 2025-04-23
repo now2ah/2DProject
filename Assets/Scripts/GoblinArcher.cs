@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GoblinArcherIdleState : State
@@ -66,6 +67,7 @@ public class GoblinArcher : MonoBehaviour
     Animator _animator;
     bool _isLookRight = false;
     bool _isAttack = false;
+    bool _isDead = false;
     int currentHP;
 
     [SerializeField] float _attackTime = 5f;
@@ -118,14 +120,6 @@ public class GoblinArcher : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.transform.tag == "PlayerProjectile")
-        {
-            Debug.Log("Damaged");
-        }
-    }
-
     public void LookAtTarget()
     {
         if (_target != null)
@@ -149,6 +143,22 @@ public class GoblinArcher : MonoBehaviour
         {
             _ShootArrow(_target);
             _elapsedTime = 0f;
+        }
+    }
+
+    public void ApplyDamage(int damageAmount)
+    {
+        if (_isDead)
+            return;
+
+        _animator.SetTrigger("BeHitTrigger");
+
+        currentHP -= damageAmount;
+        if (currentHP <= 0)
+        {
+            //die
+            _isDead = true;
+            StartCoroutine(DieCoroutine());
         }
     }
 
@@ -176,6 +186,16 @@ public class GoblinArcher : MonoBehaviour
                 GameObject arrow = Instantiate(arrowPrefab, transform.position + new Vector3(shootOffsetX * flag, shootOffsetY), direction);
             }
             
+        }
+    }
+
+    IEnumerator DieCoroutine()
+    {
+        if (_animator != null)
+        {
+            float animLength = _animator.GetCurrentAnimatorStateInfo(0).length;
+            yield return new WaitForSeconds(animLength);
+            Destroy(this.gameObject);
         }
     }
 }

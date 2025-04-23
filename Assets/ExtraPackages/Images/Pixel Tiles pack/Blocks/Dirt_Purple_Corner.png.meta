@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Dirt_Purple_Corner_0: 113662767246118561
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
