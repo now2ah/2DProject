@@ -8,6 +8,7 @@ public class TownScene : MonoBehaviour
     {
         if (!GameManager.Instance.IsPlaying)
         {
+            UIManager.Instance.FadeOut();
             CameraManager.Instance.SetTargetPosition(cameraStartPosition);
             UIManager.Instance.ShowTitlePanel(true);
             GameManager.Instance.OnStartGame += _OnStartGame;

@@ -25,6 +25,11 @@ public class GameSceneManager : Singleton<GameSceneManager>
     {
         if (_sceneNum == (int)EScene.TOWN)
         {
+            if (Time.timeScale < 1f)
+                Time.timeScale = 1f;
+
+            if (UIManager.Instance.UDiedPanel.activeSelf)
+                UIManager.Instance.HideUI(UIManager.Instance.UDiedPanel);
 
         }
         else if (_sceneNum == (int)EScene.DUNGEON)
@@ -39,7 +44,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
         if (isAdditive)
         {
             SceneManager.LoadScene(_sceneNum, LoadSceneMode.Additive);
-            
         }
         else
         {

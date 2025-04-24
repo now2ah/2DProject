@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class AttackEffect : MonoBehaviour
 {
+    public Player owner;
     public int damage;
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -10,7 +11,8 @@ public class AttackEffect : MonoBehaviour
         {
             if (collision.gameObject.TryGetComponent<GoblinArcher>(out GoblinArcher archer))
             {
-                archer.ApplyDamage(damage);
+                if (owner != null)
+                    archer.ApplyDamage(damage, owner);
             }
         }
     }

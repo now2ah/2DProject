@@ -146,7 +146,7 @@ public class GoblinArcher : MonoBehaviour
         }
     }
 
-    public void ApplyDamage(int damageAmount)
+    public void ApplyDamage(int damageAmount, Player from)
     {
         if (_isDead)
             return;
@@ -158,7 +158,8 @@ public class GoblinArcher : MonoBehaviour
         {
             //die
             _isDead = true;
-            StartCoroutine(DieCoroutine());
+            StartCoroutine(DieCoroutine(from));
+            from.ApplyExp(rewardExp);
         }
     }
 
@@ -193,7 +194,7 @@ public class GoblinArcher : MonoBehaviour
         }
     }
 
-    IEnumerator DieCoroutine()
+    IEnumerator DieCoroutine(Player from)
     {
         if (_animator != null)
         {

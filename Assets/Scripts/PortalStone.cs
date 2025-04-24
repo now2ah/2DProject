@@ -4,15 +4,21 @@ public class PortalStone : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == "Player" && !collision.isTrigger)
         {
             if (GameSceneManager.Instance.SceneNum == 1)
             {
-                GameSceneManager.Instance.LoadNextScene();
+                UIManager.Instance.FadeIn(() =>
+                {
+                    GameSceneManager.Instance.LoadNextScene();
+                });
             }
             else if (GameSceneManager.Instance.SceneNum == 2)
             {
-                GameSceneManager.Instance.LoadScene(1);
+                UIManager.Instance.FadeIn(() =>
+                {
+                    GameSceneManager.Instance.LoadScene(1);
+                });
             }
         }
     }

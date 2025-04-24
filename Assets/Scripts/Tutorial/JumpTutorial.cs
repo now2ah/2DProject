@@ -8,7 +8,7 @@ public class JumpTutorial : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            if (!isDone)
+            if (!isDone && !GameManager.Instance.IsDoneTutorial)
             {
                 //show ui
                 UIManager.Instance.ShowUIAtPosition(UIManager.Instance.TutorialJump, transform.position + new Vector3(0f, 2f));

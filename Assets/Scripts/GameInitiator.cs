@@ -14,8 +14,9 @@ public class GameInitiator : MonoBehaviour
     private void Start()
     {
         //Load Intro or Menu scene
-
-        GameSceneManager.Instance.LoadNextScene();
+        UIManager.Instance.FadeIn(() => {
+            GameSceneManager.Instance.LoadNextScene();
+        });
     }
 
     void _LoadManagers()

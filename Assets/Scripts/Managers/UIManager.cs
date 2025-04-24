@@ -10,17 +10,24 @@ public class UIManager : Singleton<UIManager>
     public InputManagerSO inputManager;
 
     public GameObject itemCursorSpritePrefab;   //addressable
+    public float fadeSpeed = 1f;
 
     [SerializeField] GameObject _inventoryPanel;
     [SerializeField] GameObject _titlePanel;
     [SerializeField] GameObject _inGamePanel;
     [SerializeField] GameObject _pausePanel;
+    [SerializeField] GameObject _uDiedPanel;
+    [SerializeField] GameObject _fadePanel;
+
 
     [SerializeField] Button startButton;
     [SerializeField] Button quitButton;
 
-    [SerializeField] Button pauseResumeButon;
+    [SerializeField] Button pauseResumeButton;
     [SerializeField] Button pauseQuitButton;
+
+    [SerializeField] Button respawnButton;
+    [SerializeField] Button uDiedQuitButton;
 
     [SerializeField] GameObject tutorialMove;
     [SerializeField] GameObject tutorialLoot;
@@ -32,6 +39,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject TutorialAttack => tutorialAttack;
     public GameObject TutorialJump => tutorialJump;
 
+    public GameObject UDiedPanel => _uDiedPanel;
 
     Canvas _uiCanvas;
 
@@ -45,8 +53,10 @@ public class UIManager : Singleton<UIManager>
     {
         startButton.onClick.AddListener(_OnStartButton);
         quitButton.onClick.AddListener(() => { Application.Quit(); });
-        pauseResumeButon.onClick.AddListener(_TogglePausePanel);
+        pauseResumeButton.onClick.AddListener(_TogglePausePanel);
         pauseQuitButton.onClick.AddListener(() => { Application.Quit(); });
+        respawnButton.onClick.AddListener(_OnRespawnButton);
+        uDiedQuitButton.onClick.AddListener(() => { Application.Quit(); });
         SubscribeEvent();
     }
 
@@ -64,6 +74,7 @@ public class UIManager : Singleton<UIManager>
     private void _OnStartGame(object sender, EventArgs e)
     {
         ShowUI(_inGamePanel);
+        GameManager.Instance.Player.OnDie += Player_OnDie;
     }
 
     public ItemCursorSpriteUI CreateCursorImage()
@@ -115,6 +126,55 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+    public void FadeIn(Action callback = null)
+    {
+        StartCoroutine(FadeInCoroutine(callback));
+    }
+
+    IEnumerator FadeInCoroutine(Action callback)
+    {
+        if (_fadePanel != null)
+        {
+            _fadePanel.SetActive(true);
+            if (_fadePanel.TryGetComponent<Image>(out Image image))
+            {
+                float alpha = 0f;
+                while (image.color.a < 1)
+                {
+                    alpha += (Time.deltaTime * fadeSpeed);
+                    image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+                    yield return null;
+                }
+            }
+            callback?.Invoke();
+        }
+    }
+
+    public void FadeOut(Action callback = null)
+    {
+        StartCoroutine(FadeOutCoroutine(callback));
+    }
+
+    IEnumerator FadeOutCoroutine(Action callback)
+    {
+        if (_fadePanel != null)
+        {
+            _fadePanel.SetActive(true);
+            if (_fadePanel.TryGetComponent<Image>(out Image image))
+            {
+                float alpha = 1f;
+                while (image.color.a > 0)
+                {
+                    alpha -= (Time.deltaTime * fadeSpeed);
+                    image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+                    yield return null;
+                }
+            }
+            _fadePanel.SetActive(false);
+            callback?.Invoke();
+        }
+    }
+
     void _OnStartButton()
     {
         GameManager.Instance.StartGame();
@@ -123,8 +183,26 @@ public class UIManager : Singleton<UIManager>
 
     void _TogglePausePanel()
     {
-        if (!_pausePanel.activeSelf) { _pausePanel.SetActive(true); }
-        else { _pausePanel.SetActive(false); }
+        if (!_pausePanel.activeSelf) 
+        { 
+            _pausePanel.SetActive(true);
+            Time.timeScale = 0.1f;
+        }
+        else 
+        { 
+            _pausePanel.SetActive(false);
+            Time.timeScale = 1f;
+        }
+    }
+
+    void _OnRespawnButton()
+    {
+        if (_uDiedPanel.activeSelf)
+        {
+            _uDiedPanel.SetActive(false);
+            Time.timeScale = 1f;
+            GameManager.Instance.RespawnPlayer();
+        }
     }
 
     private void _OnPointPerformed(object sender, Vector2 e)
@@ -156,6 +234,12 @@ public class UIManager : Singleton<UIManager>
     void _OnPausePerformed(object sender, EventArgs e)
     {
         _TogglePausePanel();
+    }
+
+    void Player_OnDie(object sender, EventArgs e)
+    {
+        ShowUI(_uDiedPanel);
+        Time.timeScale = 0.1f;
     }
 }
 

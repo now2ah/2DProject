@@ -12,7 +12,7 @@ public partial class Player : MonoBehaviour
 
     private int _level = 1;
     private int _currentHP;
-    private int _nextExp = 100;
+    private int _nextExp = 10;
     private int _currentExp = 0;
 
     public int Level => _level;
@@ -42,6 +42,7 @@ public partial class Player : MonoBehaviour
     public event EventHandler<Vector3> OnLoot;
     public event EventHandler OnEquip;
     public event EventHandler OnStatChanged;
+    public event EventHandler OnDie;
 
     //temp
     public ItemInfoSO startArmorItemInfo;
@@ -162,6 +163,35 @@ public partial class Player : MonoBehaviour
         if (_currentHP <= 0)
         {
             //die
+            OnDie?.Invoke(this, EventArgs.Empty);
+        }
+
+        OnStatChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ApplyExp(int exp)
+    {
+        _currentExp += exp;
+
+        if (_currentExp >= _nextExp)
+        {
+            _level++;
+            _currentExp -= _nextExp;
+            _nextExp *= 2;
+        }
+
+        OnStatChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SetHP(int hp)
+    {
+        if (hp > maxHP)
+        {
+            hp = maxHP;
+        }
+        else
+        {
+            _currentHP = hp;
         }
 
         OnStatChanged?.Invoke(this, EventArgs.Empty);
@@ -213,6 +243,7 @@ public partial class Player : MonoBehaviour
         if (transform.position.y < -5f)
         {
             //game over
+            OnDie?.Invoke(this, EventArgs.Empty);
         }
     }
 

@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -47,5 +49,17 @@ public class GameManager : Singleton<GameManager>
             _isPlaying = true;
             OnStartGame?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    public void RespawnPlayer()
+    {
+        _player.SetHP(_player.maxHP);
+        StartCoroutine(BackToTownCoroutine());
+    }
+
+    IEnumerator BackToTownCoroutine()
+    {
+        yield return null;
+        GameSceneManager.Instance.LoadScene(1);
     }
 }

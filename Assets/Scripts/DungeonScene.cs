@@ -12,6 +12,7 @@ public class DungeonScene : MonoBehaviour
             dungeonGenerator.GenerateDungeon(() =>
             {
                 GameManager.Instance.Player.transform.position = dungeonGenerator.PlayerStartPosition;
+                UIManager.Instance.FadeOut();
             });
         }
     }
