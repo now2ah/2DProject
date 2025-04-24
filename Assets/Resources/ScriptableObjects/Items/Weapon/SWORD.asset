@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: df0a90eb3a8375842a6ebe40754e6f8d, type: 3}
   m_Name: SWORD
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponInfoSO
+  m_EditorClassIdentifier: 
   itemName: Sword
   itemType: 1
   itemSprite: {fileID: 21300000, guid: abb8a3ce13f823c4596c8210d9e0095a, type: 3}

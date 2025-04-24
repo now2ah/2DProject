@@ -17,6 +17,7 @@ public class GameManager : Singleton<GameManager>
     public Player Player { get { return _player; } }
     public bool IsPlaying => _isPlaying;
     public bool IsDoneTutorial { get { return _isDoneTutorial; } set { _isDoneTutorial = value; } }
+
     public event EventHandler OnStartGame;
 
     private void Awake()
@@ -29,15 +30,7 @@ public class GameManager : Singleton<GameManager>
         if (null == _player)
         {
             _player = FindAnyObjectByType<Player>();
-            //instantiate Player
         }
-
-        //_player.Initialize();
-
-        //ItemManager.Instance.CreateGroundItem(EConsumableType.APPLE, Vector3.zero + new Vector3(1f, 0f, 0f));
-
-        //ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, Vector3.zero);
-        //ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, Vector3.zero + new Vector3(1f, 0f, 0f));
     }
 
     public void StartGame()
@@ -48,6 +41,7 @@ public class GameManager : Singleton<GameManager>
             _player.transform.SetParent(transform);
             _isPlaying = true;
             OnStartGame?.Invoke(this, EventArgs.Empty);
+            ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, new Vector3(11f, 1f));
         }
     }
 

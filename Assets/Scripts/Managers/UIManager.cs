@@ -51,11 +51,11 @@ public class UIManager : Singleton<UIManager>
 
     private void Start()
     {
-        startButton.onClick.AddListener(_OnStartButton);
+        startButton.onClick.AddListener(OnStartButton);
         quitButton.onClick.AddListener(() => { Application.Quit(); });
-        pauseResumeButton.onClick.AddListener(_TogglePausePanel);
+        pauseResumeButton.onClick.AddListener(TogglePausePanel);
         pauseQuitButton.onClick.AddListener(() => { Application.Quit(); });
-        respawnButton.onClick.AddListener(_OnRespawnButton);
+        respawnButton.onClick.AddListener(OnRespawnButton);
         uDiedQuitButton.onClick.AddListener(() => { Application.Quit(); });
         SubscribeEvent();
     }
@@ -73,6 +73,7 @@ public class UIManager : Singleton<UIManager>
 
     private void _OnStartGame(object sender, EventArgs e)
     {
+        _titlePanel.SetActive(false);
         ShowUI(_inGamePanel);
         GameManager.Instance.Player.OnDie += Player_OnDie;
     }
@@ -175,13 +176,12 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    void _OnStartButton()
+    public void OnStartButton()
     {
         GameManager.Instance.StartGame();
-        _titlePanel.SetActive(false);
     }
 
-    void _TogglePausePanel()
+    public void TogglePausePanel()
     {
         if (!_pausePanel.activeSelf) 
         { 
@@ -195,13 +195,14 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    void _OnRespawnButton()
+    public void OnRespawnButton()
     {
         if (_uDiedPanel.activeSelf)
         {
             _uDiedPanel.SetActive(false);
             Time.timeScale = 1f;
             GameManager.Instance.RespawnPlayer();
+            FadeOut();
         }
     }
 
@@ -233,7 +234,7 @@ public class UIManager : Singleton<UIManager>
 
     void _OnPausePerformed(object sender, EventArgs e)
     {
-        _TogglePausePanel();
+        TogglePausePanel();
     }
 
     void Player_OnDie(object sender, EventArgs e)

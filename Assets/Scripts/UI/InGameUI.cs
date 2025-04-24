@@ -16,6 +16,11 @@ public class InGameUI : MonoBehaviour
         GameManager.Instance.Player.OnStatChanged += Player_OnStatChanged;
     }
 
+    private void OnEnable()
+    {
+        _UpdatePlayerValues();
+    }
+
     private void Player_OnStatChanged(object sender, System.EventArgs e)
     {
         _UpdatePlayerValues();

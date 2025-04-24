@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,22 +10,24 @@ public class GameInitiator : MonoBehaviour
 
     private void Awake()
     {
-        _LoadManagers();
+        
     }
 
     private void Start()
     {
-        //Load Intro or Menu scene
-        UIManager.Instance.FadeIn(() => {
+        StartCoroutine(_LoadManagers(() =>
+        {
             GameSceneManager.Instance.LoadNextScene();
-        });
+        }));
     }
 
-    void _LoadManagers()
+    IEnumerator _LoadManagers(Action callback)
     {
         foreach (var manager in managers)
         {
             Instantiate(manager);
+            yield return null;
         }
+        callback?.Invoke();
     }
 }

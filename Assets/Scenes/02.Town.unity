@@ -5824,6 +5824,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scarecrow
       objectReference: {fileID: 0}
+    - target: {fileID: 2593891206015117072, guid: 7791898f101bb6546830eb8bee1efe33, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593891206015117072, guid: 7791898f101bb6546830eb8bee1efe33, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 2593891206015117074, guid: 7791898f101bb6546830eb8bee1efe33, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.4
@@ -5871,6 +5879,10 @@ PrefabInstance:
     - target: {fileID: 2593891206015117074, guid: 7791898f101bb6546830eb8bee1efe33, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8549894269691268834, guid: 7791898f101bb6546830eb8bee1efe33, type: 3}
+      propertyPath: m_Mass
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

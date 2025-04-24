@@ -98,6 +98,7 @@ public class ItemManager : Singleton<ItemManager>
         GameObject groundItemObj = Instantiate(groundItemPrefab, position, Quaternion.identity);
         if (groundItemObj.TryGetComponent<GroundItem>(out GroundItem groundItem))
         {
+            Debug.Log("GroundItemComp");
             groundItem.Initialize();
             groundItem.Item.ItemInfo = _itemInfoDic[weaponType.ToString()];
             groundItem.AddSprite();
