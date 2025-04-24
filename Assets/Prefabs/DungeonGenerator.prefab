@@ -45,9 +45,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f25a490988c9e73469f878ee85288231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerStartPosition: {x: 0, y: 0, z: 0}
+  _exitPortalPosition: {x: 0, y: 0, z: 0}
+  physicsMaterial: {fileID: 6200000, guid: 4ab9a7229d497244187113dbdecbbc43, type: 2}
+  portalStonePrefab: {fileID: 2183321564951531335, guid: 1da1efa5fe37eda4b93cc43c56985c9a, type: 3}
   GROUND_Y: 10
   dungeonLength: 1
   ruleTile: {fileID: 11400000, guid: a563f2418b5b57d43a49cd7246adffa0, type: 2}
+  enemyPrefab: {fileID: 4656193114701183792, guid: 4dec7be0827fdff48982604505ccaa3c, type: 3}
+  enemyNum: 5
 --- !u!114 &7279507290744597632
 MonoBehaviour:
   m_ObjectHideFlags: 0

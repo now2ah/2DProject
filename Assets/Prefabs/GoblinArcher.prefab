@@ -2068,6 +2068,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootOffsetX: 0.25
   shootOffsetY: 0.25
+  maxHP: 10
+  rewardExp: 10
+  attackDamage: 5
   _attackTime: 5
   arrowPrefab: {fileID: 3480753881842685813, guid: ebe53ba02a0c4474ca012d1aa6d173ed, type: 3}
 --- !u!210 &1580489458272830719
@@ -2119,7 +2122,7 @@ Rigidbody2D:
   m_Mass: 50
   m_LinearDamping: 50
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 20
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

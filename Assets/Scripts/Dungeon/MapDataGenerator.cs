@@ -44,6 +44,22 @@ public class TilemapData
         }
     }
 
+    public int GetGroundY(int x)
+    {
+        if (null == _tileData || x < 0 || x >= XSize)
+            return -1;
+
+        for (int y=0; y<YSize; ++y)
+        {
+            if (_tileData[x, y] == 0)
+            {
+                return y;
+            }
+        }
+
+        return 0;
+    }
+
     bool _IsValid(int y, int x)
     {
         if (x >= _xSize || x < 0)

@@ -124,6 +124,22 @@ public partial class Player : MonoBehaviour
         _LootItemOnGround();
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            _isGrounded = true;
+        }
+    }
+
+    private void OnTriggerExitr2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            _isGrounded = false;
+        }
+    }
+
     public void Initialize()
     {
         _Equip(ItemManager.Instance.CreateItem(startArmorItemInfo));
@@ -138,7 +154,10 @@ public partial class Player : MonoBehaviour
 
     void _HandleMovement()
     {
-        _rigidbody.linearVelocity = new Vector2(_inputX * moveSpeed, _rigidbody.linearVelocity.y);
+        float linearVelocity = _rigidbody.linearVelocity.y;
+        linearVelocity -= 9.8f * Time.deltaTime;
+
+        _rigidbody.linearVelocity = new Vector2(_inputX * moveSpeed, linearVelocity);
 
         if (_isWalking)
         {
@@ -152,21 +171,6 @@ public partial class Player : MonoBehaviour
                 _isLookRight = false;
                 transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             }
-        }
-
-        _isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        bool isAirborne = !_isGrounded;
-        //_playerAnimation.SetJuping(isAirborne);
-
-        if (isAirborne && _rigidbody.linearVelocity.y < -0.1f)
-        {
-            //_playerAnimation?.SetFalling(true);
-        }
-
-        if (!_isGrounded)
-        {
-            //_playerAnimation?.PlayLanding();
         }
     }
 
