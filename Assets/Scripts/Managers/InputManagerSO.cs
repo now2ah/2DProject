@@ -15,6 +15,7 @@ public class InputManagerSO : ScriptableObject
     private InputAction _interactAction;
     private InputAction _lootAction;
     private InputAction _openInventoryAction;
+    private InputAction _pauseAction;
 
     public event EventHandler<Vector2> OnPointPerformed;
 
@@ -29,6 +30,7 @@ public class InputManagerSO : ScriptableObject
     public event EventHandler OnInteractPerformed;
     public event EventHandler OnLootPerformed;
     public event EventHandler OnOpenInventoryPerformed;
+    public event EventHandler OnPausePerformed;
 
     void OnEnable()
     {
@@ -46,6 +48,7 @@ public class InputManagerSO : ScriptableObject
         _interactAction.performed += _InteractPerformed;
         _lootAction.performed += _LootPerformed;
         _openInventoryAction.performed += _OpenInventoryPerformed;
+        _pauseAction.performed += _PausePerformed;
     }
 
     private void OnDisable()
@@ -61,6 +64,7 @@ public class InputManagerSO : ScriptableObject
         _interactAction.performed -= _InteractPerformed;
         _lootAction.performed -= _LootPerformed;
         _openInventoryAction.performed -= _OpenInventoryPerformed;
+        _pauseAction.performed -= _PausePerformed;
 
         _DisableAllActions();
     }
@@ -75,6 +79,7 @@ public class InputManagerSO : ScriptableObject
         _interactAction = inputActionAsset.FindAction("Interact");
         _lootAction = inputActionAsset.FindAction("Loot");
         _openInventoryAction = inputActionAsset.FindAction("OpenInventory");
+        _pauseAction = inputActionAsset.FindAction("Pause");
     }
 
     void _EnableAllActions()
@@ -87,6 +92,7 @@ public class InputManagerSO : ScriptableObject
         _interactAction.Enable();
         _lootAction.Enable();
         _openInventoryAction.Enable();
+        _pauseAction.Enable();
     }
 
     void _DisableAllActions()
@@ -99,6 +105,7 @@ public class InputManagerSO : ScriptableObject
         _interactAction.Disable();
         _lootAction.Disable();
         _openInventoryAction.Disable();
+        _pauseAction.Disable();
     }
     private void _PointPerformed(InputAction.CallbackContext obj)
     {
@@ -151,5 +158,10 @@ public class InputManagerSO : ScriptableObject
     private void _OpenInventoryPerformed(InputAction.CallbackContext obj)
     {
         OnOpenInventoryPerformed?.Invoke(obj, EventArgs.Empty);
+    }
+
+    private void _PausePerformed(InputAction.CallbackContext obj)
+    {
+        OnPausePerformed?.Invoke(obj, EventArgs.Empty);
     }
 }

@@ -68,7 +68,7 @@ public class GoblinArcher : MonoBehaviour
     bool _isLookRight = false;
     bool _isAttack = false;
     bool _isDead = false;
-    int currentHP;
+    int _currentHP;
 
     [SerializeField] float _attackTime = 5f;
     float _elapsedTime = 0f;
@@ -87,7 +87,7 @@ public class GoblinArcher : MonoBehaviour
         _stateMachine = gameObject.AddComponent<StateMachine>();
         _idleState = new GoblinArcherIdleState(this);
         _attackState = new GoblinArcherAttackState(this);
-        currentHP = maxHP;
+        _currentHP = maxHP;
     }
 
     private void Start()
@@ -153,8 +153,8 @@ public class GoblinArcher : MonoBehaviour
 
         _animator.SetTrigger("BeHitTrigger");
 
-        currentHP -= damageAmount;
-        if (currentHP <= 0)
+        _currentHP -= damageAmount;
+        if (_currentHP <= 0)
         {
             //die
             _isDead = true;
@@ -183,7 +183,11 @@ public class GoblinArcher : MonoBehaviour
                     flag = 1f;
                 }
                 
-                GameObject arrow = Instantiate(arrowPrefab, transform.position + new Vector3(shootOffsetX * flag, shootOffsetY), direction);
+                GameObject arrowObj = Instantiate(arrowPrefab, transform.position + new Vector3(shootOffsetX * flag, shootOffsetY), direction);
+                if (arrowObj.TryGetComponent<Arrow>(out Arrow arrow))
+                {
+                    arrow.owner = this;
+                }
             }
             
         }

@@ -22,6 +22,7 @@ public partial class Player : MonoBehaviour
 
     public float moveSpeed = 5.0f;
     public float jumpForce = 5.5f;
+    public float damagedJumpForce = 2f;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
@@ -65,6 +66,7 @@ public partial class Player : MonoBehaviour
     {
         _HandleMovement();
         _SetAnimationParams();
+        _CheckFall();
     }
 
     private void OnEnable()
@@ -105,7 +107,7 @@ public partial class Player : MonoBehaviour
 
     private void InputManager_OnJumpPerformed(object sender, EventArgs e)
     {
-        _Jump();
+        _Jump(jumpForce);
     }
 
 
@@ -132,7 +134,7 @@ public partial class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerExitr2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
@@ -147,9 +149,22 @@ public partial class Player : MonoBehaviour
 
     public void Attack()
     {
-        if (_isAttacking) { return; }
-
         StartCoroutine(AttackCoroutine());
+    }
+
+    public void ApplyDamage(int damageAmount)
+    {
+        _animator.SetTrigger("BeHitTrigger");
+
+        _Jump(damagedJumpForce);
+
+        _currentHP -= damageAmount;
+        if (_currentHP <= 0)
+        {
+            //die
+        }
+
+        OnStatChanged?.Invoke(this, EventArgs.Empty);
     }
 
     void _HandleMovement()
@@ -174,7 +189,7 @@ public partial class Player : MonoBehaviour
         }
     }
 
-    void _Jump()
+    void _Jump(float jumpForce)
     {
         if (_isGrounded)
         {
@@ -185,6 +200,7 @@ public partial class Player : MonoBehaviour
     void _TriggerAttackAnimation()
     {
         if (_isAttacking) { return; }
+        _isAttacking = true;
 
         if (_animator != null)
         {
@@ -192,11 +208,16 @@ public partial class Player : MonoBehaviour
         }
     }
 
+    void _CheckFall()
+    {
+        if (transform.position.y < -5f)
+        {
+            //game over
+        }
+    }
+
     private IEnumerator AttackCoroutine()
     {
-        _isAttacking = true;
-
-        yield return null;
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
 
         if (_equipments[(int)EEquipmentType.WEAPON] != null)

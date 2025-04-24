@@ -14,9 +14,13 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] GameObject _inventoryPanel;
     [SerializeField] GameObject _titlePanel;
     [SerializeField] GameObject _inGamePanel;
+    [SerializeField] GameObject _pausePanel;
 
     [SerializeField] Button startButton;
     [SerializeField] Button quitButton;
+
+    [SerializeField] Button pauseResumeButon;
+    [SerializeField] Button pauseQuitButton;
 
     [SerializeField] GameObject tutorialMove;
     [SerializeField] GameObject tutorialLoot;
@@ -41,6 +45,8 @@ public class UIManager : Singleton<UIManager>
     {
         startButton.onClick.AddListener(_OnStartButton);
         quitButton.onClick.AddListener(() => { Application.Quit(); });
+        pauseResumeButon.onClick.AddListener(_TogglePausePanel);
+        pauseQuitButton.onClick.AddListener(() => { Application.Quit(); });
         SubscribeEvent();
     }
 
@@ -51,6 +57,7 @@ public class UIManager : Singleton<UIManager>
         inputManager.OnClickStarted += _OnClickStarted;
         inputManager.OnClickPerformed += _OnClickPerformed;
         inputManager.OnClickCanceled += _OnClickCanceled;
+        inputManager.OnPausePerformed += _OnPausePerformed;
         GameManager.Instance.OnStartGame += _OnStartGame;
     }
 
@@ -114,6 +121,12 @@ public class UIManager : Singleton<UIManager>
         _titlePanel.SetActive(false);
     }
 
+    void _TogglePausePanel()
+    {
+        if (!_pausePanel.activeSelf) { _pausePanel.SetActive(true); }
+        else { _pausePanel.SetActive(false); }
+    }
+
     private void _OnPointPerformed(object sender, Vector2 e)
     {
 
@@ -138,6 +151,11 @@ public class UIManager : Singleton<UIManager>
     {
         if(!_inventoryPanel.activeSelf) { _inventoryPanel.SetActive(true); }
         else { _inventoryPanel.SetActive(false); }
+    }
+
+    void _OnPausePerformed(object sender, EventArgs e)
+    {
+        _TogglePausePanel();
     }
 }
 

@@ -1,5 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+public enum EScene
+{
+    INITIATE,
+    TOWN,
+    DUNGEON,
+}
 
 public class GameSceneManager : Singleton<GameSceneManager>
 {
@@ -9,7 +17,20 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
     private void Awake()
     {
+        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
         DontDestroyOnLoad(this);
+    }
+
+    private void SceneManager_sceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (_sceneNum == (int)EScene.TOWN)
+        {
+
+        }
+        else if (_sceneNum == (int)EScene.DUNGEON)
+        {
+
+        }
     }
 
     public void LoadNextScene(bool isAdditive = false)
@@ -28,6 +49,7 @@ public class GameSceneManager : Singleton<GameSceneManager>
 
     public void LoadScene(int sceneNum)
     {
+        _sceneNum = sceneNum;
         SceneManager.LoadScene(sceneNum);
     }
 }

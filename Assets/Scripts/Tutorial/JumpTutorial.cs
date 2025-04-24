@@ -23,6 +23,7 @@ public class JumpTutorial : MonoBehaviour
             //hide ui
             isDone = true;
             UIManager.Instance.HideUI(UIManager.Instance.TutorialJump);
+            GameManager.Instance.IsDoneTutorial = true;
         }
     }
 }

@@ -9,8 +9,12 @@ public class GameManager : Singleton<GameManager>
 
     Player _player;
 
-    public Player Player { get { return _player; } }
+    bool _isPlaying = false;
+    bool _isDoneTutorial = false;
 
+    public Player Player { get { return _player; } }
+    public bool IsPlaying => _isPlaying;
+    public bool IsDoneTutorial { get { return _isDoneTutorial; } set { _isDoneTutorial = value; } }
     public event EventHandler OnStartGame;
 
     private void Awake()
@@ -40,6 +44,7 @@ public class GameManager : Singleton<GameManager>
         {
             _player = Instantiate(playerPrefab, playerStartPosition, Quaternion.identity).GetComponent<Player>();
             _player.transform.SetParent(transform);
+            _isPlaying = true;
             OnStartGame?.Invoke(this, EventArgs.Empty);
         }
     }

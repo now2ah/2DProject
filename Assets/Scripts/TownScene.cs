@@ -6,9 +6,16 @@ public class TownScene : MonoBehaviour
 
     void Start()
     {
-        CameraManager.Instance.SetTargetPosition(cameraStartPosition);
-        UIManager.Instance.ShowTitlePanel(true);
-        GameManager.Instance.OnStartGame += _OnStartGame;
+        if (!GameManager.Instance.IsPlaying)
+        {
+            CameraManager.Instance.SetTargetPosition(cameraStartPosition);
+            UIManager.Instance.ShowTitlePanel(true);
+            GameManager.Instance.OnStartGame += _OnStartGame;
+        }
+        else
+        {
+            GameManager.Instance.Player.transform.position = GameManager.Instance.playerStartPosition;
+        }
     }
 
     private void _OnStartGame(object sender, System.EventArgs e)
