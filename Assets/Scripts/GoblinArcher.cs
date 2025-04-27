@@ -153,6 +153,8 @@ public class GoblinArcher : MonoBehaviour
 
         _animator.SetTrigger("BeHitTrigger");
 
+        SoundManager.Instance.PlaySfx(ESFX.ENEMYBEHIT);
+
         _currentHP -= damageAmount;
         if (_currentHP <= 0)
         {
@@ -168,6 +170,8 @@ public class GoblinArcher : MonoBehaviour
         if (_animator != null && target != null)
         {
             _animator.SetTrigger("AttackTrigger");
+
+            SoundManager.Instance.PlaySfx(ESFX.ENEMY_SHOOT);
             
             if (arrowPrefab != null)
             {

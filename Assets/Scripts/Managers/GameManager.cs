@@ -42,6 +42,7 @@ public class GameManager : Singleton<GameManager>
             _isPlaying = true;
             OnStartGame?.Invoke(this, EventArgs.Empty);
             ItemManager.Instance.CreateGroundItem(EWeaponType.SWORD, new Vector3(11f, 1f));
+            ItemManager.Instance.CreateGroundItem(EArmorType.LETHER_ARMOR, new Vector3(25f, 1f));
         }
     }
 

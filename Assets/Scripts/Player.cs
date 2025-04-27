@@ -157,12 +157,15 @@ public partial class Player : MonoBehaviour
     {
         _animator.SetTrigger("BeHitTrigger");
 
+        SoundManager.Instance.PlaySfx(ESFX.PLAYERBEHIT);
+
         _Jump(damagedJumpForce);
 
         _currentHP -= damageAmount;
         if (_currentHP <= 0)
         {
             //die
+            SoundManager.Instance.PlaySfx(ESFX.DIED);
             OnDie?.Invoke(this, EventArgs.Empty);
         }
 
@@ -223,6 +226,7 @@ public partial class Player : MonoBehaviour
     {
         if (_isGrounded)
         {
+            SoundManager.Instance.PlaySfx(ESFX.JUMP);
             _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, jumpForce);
         }
     }
@@ -243,6 +247,7 @@ public partial class Player : MonoBehaviour
         if (transform.position.y < -5f)
         {
             //game over
+            SoundManager.Instance.PlaySfx(ESFX.DIED);
             OnDie?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -255,6 +260,8 @@ public partial class Player : MonoBehaviour
         {
             ((Weapon)_equipments[(int)EEquipmentType.WEAPON]).PlayAttackEffect(_isLookRight);
         }
+
+        SoundManager.Instance.PlaySfx(ESFX.ATTACK);
 
         if (stateInfo.IsName("0_Attack_Normal"))
         {

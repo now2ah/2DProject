@@ -6,6 +6,8 @@ public class TownScene : MonoBehaviour
 
     void Start()
     {
+        SoundManager.Instance.PlayBgm(EBGM.BGM_STAGE);
+
         if (!GameManager.Instance.IsPlaying)
         {
             UIManager.Instance.FadeOut();

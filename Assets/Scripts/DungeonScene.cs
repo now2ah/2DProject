@@ -9,6 +9,8 @@ public class DungeonScene : MonoBehaviour
     {
         if (dungeonGenerator != null)
         {
+            SoundManager.Instance.PlayBgm(EBGM.BGM_DUNGEON);
+
             dungeonGenerator.GenerateDungeon(() =>
             {
                 GameManager.Instance.Player.transform.position = dungeonGenerator.PlayerStartPosition;

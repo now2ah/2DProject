@@ -2069,7 +2069,7 @@ MonoBehaviour:
   shootOffsetX: 0.25
   shootOffsetY: 0.25
   maxHP: 10
-  rewardExp: 10
+  rewardExp: 6
   attackDamage: 5
   _attackTime: 5
   arrowPrefab: {fileID: 3480753881842685813, guid: ebe53ba02a0c4474ca012d1aa6d173ed, type: 3}

@@ -4,13 +4,23 @@ using UnityEngine;
 
 public enum EBGM
 {
-    BGM_STAGE
+    BGM_STAGE,
+    BGM_DUNGEON
 }
 
 public enum ESFX
 {
     JUMP,
-    ATTACK
+    ATTACK,
+    BUTTON,
+    ENEMYBEHIT,
+    HIT,
+    LOOT,
+    PLAYERBEHIT,
+    PORTAL,
+    PUT_ITEM,
+    ENEMY_SHOOT,
+    DIED
 }
 
 public class SoundManager : Singleton<SoundManager>

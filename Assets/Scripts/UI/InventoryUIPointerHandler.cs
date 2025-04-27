@@ -30,6 +30,8 @@ public class InventoryUIPointerHandler : MonoBehaviour, IPointerUpHandler, IPoin
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        SoundManager.Instance.PlaySfx(ESFX.PUT_ITEM);
+
         RaycastResult hit = eventData.pointerCurrentRaycast;
 
         //check slot (equipment? or inventory?)
@@ -77,6 +79,8 @@ public class InventoryUIPointerHandler : MonoBehaviour, IPointerUpHandler, IPoin
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        SoundManager.Instance.PlaySfx(ESFX.PUT_ITEM);
+
         RaycastResult hit = eventData.pointerCurrentRaycast;
 
         //check slot (equipment? or inventory?)

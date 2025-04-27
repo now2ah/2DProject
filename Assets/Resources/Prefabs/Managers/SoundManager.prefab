@@ -48,4 +48,14 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1af07b2b12af4eb43a622d27302b5538, type: 3}
   - {fileID: 8300000, guid: 20b288afcad0f2f4098f4f59804356b7, type: 3}
   - {fileID: 8300000, guid: eab4bbd54c39cb544b7c0c3dd75641f6, type: 3}
+  - {fileID: 8300000, guid: 6c2c547ce91bf6e4b8425028139818ca, type: 3}
+  - {fileID: 8300000, guid: 4d8bd68d80cdb994b8b27e43118e4492, type: 3}
+  - {fileID: 8300000, guid: 8ca4ff19143c0e243813be006c366928, type: 3}
+  - {fileID: 8300000, guid: 21f7988df874e0c4e896f28c7c0dd257, type: 3}
+  - {fileID: 8300000, guid: e1fe37686aa8b0745a2cef877906dcac, type: 3}
+  - {fileID: 8300000, guid: 51924f0c455ced346941585e8ec8636d, type: 3}
+  - {fileID: 8300000, guid: daf7e7f0cad12a9488ca336fa577a714, type: 3}
+  - {fileID: 8300000, guid: 74cd046fee0b3b446859f6fc27e5a668, type: 3}
+  - {fileID: 8300000, guid: 072d9973dd6468a40b9b4548d5731eb6, type: 3}
+  - {fileID: 8300000, guid: 8c276ed74b5c06d4ea88792d9db0eb2c, type: 3}
   sfxChannel: 5

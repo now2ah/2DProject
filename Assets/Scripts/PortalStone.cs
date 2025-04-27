@@ -6,6 +6,7 @@ public class PortalStone : MonoBehaviour
     {
         if (collision.tag == "Player" && !collision.isTrigger)
         {
+            SoundManager.Instance.PlaySfx(ESFX.PORTAL);
             if (GameSceneManager.Instance.SceneNum == 1)
             {
                 UIManager.Instance.FadeIn(() =>

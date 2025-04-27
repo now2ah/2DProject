@@ -27,6 +27,8 @@ public partial class Player : MonoBehaviour
         {
             _inventoryItemList.Add(item);
 
+            SoundManager.Instance.PlaySfx(ESFX.LOOT);
+
             //if player has not equipment, equip automatically
             if (item.ItemInfo.itemType == EItemType.EQUIPMENT)
             {

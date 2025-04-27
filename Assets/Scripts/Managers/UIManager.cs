@@ -178,11 +178,13 @@ public class UIManager : Singleton<UIManager>
 
     public void OnStartButton()
     {
+        SoundManager.Instance.PlaySfx(ESFX.BUTTON);
         GameManager.Instance.StartGame();
     }
 
     public void TogglePausePanel()
     {
+        SoundManager.Instance.PlaySfx(ESFX.BUTTON);
         if (!_pausePanel.activeSelf) 
         { 
             _pausePanel.SetActive(true);
@@ -199,6 +201,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (_uDiedPanel.activeSelf)
         {
+            SoundManager.Instance.PlaySfx(ESFX.BUTTON);
             _uDiedPanel.SetActive(false);
             Time.timeScale = 1f;
             GameManager.Instance.RespawnPlayer();

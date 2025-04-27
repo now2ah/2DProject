@@ -107,6 +107,20 @@ public class ItemManager : Singleton<ItemManager>
         return groundItemObj;
     }
 
+    public GameObject CreateGroundItem(EArmorType armorType, Vector3 position)
+    {
+        GameObject groundItemObj = Instantiate(groundItemPrefab, position, Quaternion.identity);
+        if (groundItemObj.TryGetComponent<GroundItem>(out GroundItem groundItem))
+        {
+            Debug.Log("GroundItemComp");
+            groundItem.Initialize();
+            groundItem.Item.ItemInfo = _itemInfoDic[armorType.ToString()];
+            groundItem.AddSprite();
+        }
+
+        return groundItemObj;
+    }
+
     void _SetUpItemInfoDictionary()
     {
         foreach(var itemInfo in itemInfos)

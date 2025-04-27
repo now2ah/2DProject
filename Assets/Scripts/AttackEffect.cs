@@ -9,6 +9,7 @@ public class AttackEffect : MonoBehaviour
     {
         if (collision.transform.tag == "Enemy")
         {
+            SoundManager.Instance.PlaySfx(ESFX.HIT);
             if (collision.gameObject.TryGetComponent<GoblinArcher>(out GoblinArcher archer))
             {
                 if (owner != null)

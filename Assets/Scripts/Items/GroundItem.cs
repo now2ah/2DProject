@@ -14,6 +14,11 @@ public class GroundItem : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void OnDestroy()
+    {
+        _UnSubscribeEvent();
+    }
+
     public void Initialize()
     {
         _item = new Item();
@@ -32,6 +37,11 @@ public class GroundItem : MonoBehaviour
     void _SubscribeEvent()
     {
         GameManager.Instance.Player.OnLoot += Player_OnLoot;
+    }
+
+    void _UnSubscribeEvent()
+    {
+        GameManager.Instance.Player.OnLoot -= Player_OnLoot;
     }
 
     private void Player_OnLoot(object sender, Vector3 playerPostion)
