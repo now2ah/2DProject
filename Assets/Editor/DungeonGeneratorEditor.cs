@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using twoDProject.Dungeon;
 
 [CustomEditor(typeof(DungeonGenerator))]
 public class DungeonGeneratorEditor : Editor

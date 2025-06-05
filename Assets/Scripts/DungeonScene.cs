@@ -1,4 +1,5 @@
 using UnityEngine;
+using twoDProject.Dungeon;
 
 public class DungeonScene : MonoBehaviour
 {

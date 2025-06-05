@@ -31,13 +31,4 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-
-    private void Awake()
-    {
-        //DontDestroyOnLoad(this.gameObject);
-    }
-
-    private void Start()
-    {
-    }
 }

@@ -8,11 +8,6 @@ public class GameInitiator : MonoBehaviour
     [SerializeField]
     private GameObject[] managers;
 
-    private void Awake()
-    {
-        
-    }
-
     private void Start()
     {
         StartCoroutine(_LoadManagers(() =>
