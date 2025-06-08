@@ -7,52 +7,63 @@ namespace twoDProject.Dungeon
 {
     public class DungeonGenerator : MonoBehaviour
     {
+        [Header("Generation Settings")]
+        [SerializeField] private int dungeonLength;
+        [SerializeField] private int enemyAmount;
+
+        [Header("Entrance Map Tile")]
+        [SerializeField] private int entranceTileXSize;
+        [SerializeField] private int entranceTileYSize;
+        [SerializeField] private int entranceStartY;
+        [SerializeField] private int entranceWidthX;
+
+        [Header("Height Terrain Map Tile")]
+        [SerializeField] private int heightTerrainTileXSize;
+        [SerializeField] private int heightTerrainTileYSize;
+        [SerializeField] private int holePerTilemap;
+        [SerializeField] private float intensity;
+
+        [Header("Exit Map Tile")]
+        [SerializeField] private int exitTileXSize;
+        [SerializeField] private int exitTileYSize;
+        [SerializeField] private int exitWidthX;
+
+        [Header("Others")]
+        [SerializeField] PhysicsMaterial2D physicsMaterial;
+        [SerializeField] TileBase ruleTile;
+        [SerializeField] GameObject portalStonePrefab;
+        [SerializeField] GameObject enemyPrefab;
         [SerializeField] Vector3 _playerStartPosition;
         [SerializeField] Vector3 _exitPortalPosition;
-
-        public PhysicsMaterial2D physicsMaterial;
-
+        
         public Vector3 PlayerStartPosition => _playerStartPosition;
 
-        public GameObject portalStonePrefab;
-        GameObject _portalStone;
+        private GameObject _portalStone;
+        private List<GameObject> _enemyList;
+        private int _exitY;
+        private GameObject _gridObject;
+        private Grid _grid;
+        private GameObject _tilemapObject;
+        private Tilemap _tileMap;
+        private TilemapCollider2D _tilemapCollider2d;
+        private CompositeCollider2D _compositeCollider2d;
+        private Rigidbody2D _rigidbody2d;
+        //private MapDataGenerator _mapDataGenerator;
+        private List<TilemapData> _dungeonTilemapData;
 
-        List<GameObject> _enemyList;
-
-        public int GROUND_Y = 10;
-        public int dungeonLength = 1;
-        public TileBase ruleTile;
-        public GameObject enemyPrefab;
-        public int enemyNum = 3;
-
-        int _exitY;
-        public int EXIT_Y => _exitY;
-
-        GameObject _gridObject;
-        Grid _grid;
-
-        GameObject _tilemapObject;
-        Tilemap _tileMap;
-
-        TilemapCollider2D _tilemapCollider2d;
-        CompositeCollider2D _compositeCollider2d;
-        Rigidbody2D _rigidbody2d;
-
-        MapDataGenerator _mapDataGenerator;
-        List<TilemapData> _dungeonTilemapData;
+        private void Awake()
+        {
+            Initialize();
+        }
 
         public void GenerateDungeon(Action callback = null)
         {
-            _Initialize();
+            Initialize();
 
-            //generate entrance tilemap
-            //generate middle tilemap
-            //generate exit tilemap
-            //merge tilemaps
-            //add entrance, exit
-            //add monsters
+            //clear datas
             _tileMap.ClearAllTiles();
             _dungeonTilemapData.Clear();
+
             if (_portalStone != null)
             {
 #if UNITY_EDITOR
@@ -60,6 +71,7 @@ namespace twoDProject.Dungeon
 #endif
                 Destroy(_portalStone);
             }
+
             if (_enemyList.Count > 0)
             {
                 foreach (GameObject enemy in _enemyList)
@@ -72,17 +84,26 @@ namespace twoDProject.Dungeon
                 _enemyList.Clear();
             }
 
+            //entrance tile map
+            EntranceTileMapData entranceTilemap = new EntranceTileMapData(entranceTileXSize, entranceTileYSize, entranceStartY, entranceWidthX);
+            _dungeonTilemapData.Add(entranceTilemap);
 
-            _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.ENTRANCE, GROUND_Y));
-
+            //height terrain tile map
             for (int i = 0; i < dungeonLength; ++i)
             {
-                _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.HEIGHT_TERRAIN, _mapDataGenerator.CurrentHeight));
+                HeightTerrainTileMapData heightTerrainTilemap = new HeightTerrainTileMapData(heightTerrainTileXSize, heightTerrainTileYSize,
+                    _dungeonTilemapData[_dungeonTilemapData.Count - 1].LastY, holePerTilemap, intensity);
+                _dungeonTilemapData.Add(heightTerrainTilemap);
             }
 
-            _dungeonTilemapData.Add(_mapDataGenerator.GenerateTilemap(MapDataGenerator.EMapDataType.EXIT, _mapDataGenerator.CurrentHeight));
+            //exit tile map
+            ExitTileMapData exitTilemap = new ExitTileMapData(exitTileXSize, exitTileYSize, _dungeonTilemapData[_dungeonTilemapData.Count - 1].LastY, exitWidthX);
+            _dungeonTilemapData.Add(exitTilemap);
 
-            _exitY = _mapDataGenerator.CurrentHeight;
+            foreach (var tilemaps in _dungeonTilemapData)
+            {
+                tilemaps.GenerateTileMap();
+            }
 
             for (int i = 0; i < _dungeonTilemapData.Count; ++i)
             {
@@ -100,15 +121,17 @@ namespace twoDProject.Dungeon
             _compositeCollider2d.sharedMaterial = physicsMaterial;
             _rigidbody2d.sharedMaterial = physicsMaterial;
 
-            _playerStartPosition = new Vector3(3f, GROUND_Y + 1);
-            _exitPortalPosition = new Vector3((_mapDataGenerator.xSize * 2) + (_mapDataGenerator.xSize * dungeonLength) - 3f, _exitY + 1);
+            //set player start position, portal position
+            _playerStartPosition = new Vector3(3f, entranceTilemap.StartHeight + 1);
+            _exitPortalPosition = new Vector3(entranceTileXSize + exitTileXSize + (heightTerrainTileXSize * dungeonLength) - 3f, exitTilemap.LastY + 1);
 
             _portalStone = Instantiate(portalStonePrefab, _exitPortalPosition, Quaternion.identity);
 
+            //spawn enemies
             for (int i = 1; i < _dungeonTilemapData.Count - 1; ++i)
             {
                 HashSet<int> randNum = new HashSet<int>();
-                for (int j = 0; j < enemyNum; ++j)
+                for (int j = 0; j < enemyAmount; ++j)
                 {
                     int randX = UnityEngine.Random.Range(0, _dungeonTilemapData[i].XSize);
                     randNum.Add(randX);
@@ -116,7 +139,6 @@ namespace twoDProject.Dungeon
 
                 foreach (int randX in randNum)
                 {
-                    //int groundY = _dungeonTilemapData[i].GetGroundY(randX);
                     int groundY = _dungeonTilemapData[i].YSize;
 
                     //if it's not a hole
@@ -131,12 +153,9 @@ namespace twoDProject.Dungeon
             callback?.Invoke();
         }
 
-        void _Initialize()
+        private void Initialize()
         {
-            _mapDataGenerator = GetComponent<MapDataGenerator>();
-            if (null == _dungeonTilemapData)
-                _dungeonTilemapData = new List<TilemapData>();
-
+            _dungeonTilemapData = new List<TilemapData>();
             _enemyList = new List<GameObject>();
             _GenerateGrid();
             _GenerateTilemap();
@@ -168,11 +187,11 @@ namespace twoDProject.Dungeon
 
         void _PaintTiles(Tilemap tilemap, TilemapData tilemapData, int offset, TileBase tile)
         {
-            for (int i = 0; i < tilemapData.YSize; ++i)
+            for (int i = 0; i < tilemapData.XSize; ++i)
             {
-                for (int j = 0; j < tilemapData.XSize; ++j)
+                for (int j = 0; j < tilemapData.YSize; ++j)
                 {
-                    if (tilemapData.GetData(i, j) == 1)
+                    if (tilemapData.GetData(j, i) == 1)
                         tilemap.SetTile(new Vector3Int(i + (tilemapData.XSize * offset), j), tile);
                 }
             }

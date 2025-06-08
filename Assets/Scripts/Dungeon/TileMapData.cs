@@ -1,3 +1,5 @@
+using System.Linq;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 namespace twoDProject.Dungeon
@@ -19,13 +21,13 @@ namespace twoDProject.Dungeon
 
         protected int[,] _tileData;
 
-        protected int lastY;
+        protected int _lastY;
 
         public int XSize => _xSize;
         public int YSize => _ySize;
         public int[,] TileData => _tileData;
 
-        public int LastY => lastY;
+        public int LastY => _lastY;
 
         public abstract void GenerateTileMap();
 
@@ -35,6 +37,13 @@ namespace twoDProject.Dungeon
             _ySize = ySize;
 
             _tileData = new int[ySize, xSize];
+            for (int i = 0; i < ySize; ++i)
+            {
+                for (int j = 0; j < xSize; ++j)
+                {
+                    _tileData[i, j] = 0;
+                }
+            }
         }
 
         public int GetData(int y, int x)
@@ -86,7 +95,7 @@ namespace twoDProject.Dungeon
             return -1;
         }
 
-        protected static bool IsValidCoordinate(int value, int size)
+        protected static bool IsWithinBounds(int value, int size)
         {
             if (value >= size || value < 0)
                 return false;
@@ -106,15 +115,20 @@ namespace twoDProject.Dungeon
         }
     }
 
+    /// <summary>
+    /// tile map data of dungeon entrance
+    /// </summary>
     public class EntranceTileMapData : TilemapData
     {
         private readonly int _startHeight;
         private readonly int _entranceWidth;
 
+        public int StartHeight => _startHeight;
+
         public EntranceTileMapData(int xSize, int ySize, int startHeight, int entranceWidth) : base(xSize, ySize)
         {
-            if (IsValidCoordinate(startHeight, ySize) == false ||
-                IsValidCoordinate(entranceWidth, xSize) == false)
+            if (IsWithinBounds(startHeight, ySize) == false ||
+                IsWithinBounds(entranceWidth, xSize) == false)
             {
                 throw new System.Exception("Invalid parameters");
             }
@@ -138,8 +152,116 @@ namespace twoDProject.Dungeon
                 else if (i <= _entranceWidth)
                 {
                     height = _startHeight;
+                    _lastY = height;
                 }
                 else if (i > _entranceWidth)
+                {
+                    int addValue = Random.Range(-1, 2);
+                    height = Mathf.Clamp(height + addValue, 0, _ySize);
+                }
+
+                for (int j = height; j >= 0; --j)
+                {
+                    SetData(j, i, ETileType.Tile);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// automatically generated dungeon tile map data
+    /// </summary>
+    public class HeightTerrainTileMapData : TilemapData
+    {
+        private readonly int _startHeight;
+        private readonly int _holePerTilemap;
+        private readonly float _intensity;
+
+        public HeightTerrainTileMapData(int xSize, int ySize, int startHeight, int holePerTilemap, float intensity) : base(xSize, ySize)
+        {
+            if (IsWithinBounds(startHeight, ySize) == false)
+            {
+                throw new System.Exception("Invalid parameters");
+            }
+
+            _startHeight = startHeight;
+            _holePerTilemap = holePerTilemap;
+            _intensity = intensity;
+        }
+
+        public override void GenerateTileMap()
+        {
+            int[] holeXs = new int[_holePerTilemap];
+            for (int i = 0; i < _holePerTilemap; ++i)
+            {
+                holeXs[i] = Random.Range(0, _xSize);
+            }
+
+            int height = _startHeight;
+            for (int i = 0; i < _xSize; ++i)
+            {
+                if (holeXs.Contains(i))
+                {
+                    continue;
+                }
+                else
+                {
+                    if (Random.value < _intensity)
+                    {
+                        int addValue = Random.Range(-1, 2);
+                        height = Mathf.Clamp(height + addValue, 0, _ySize);
+                    }
+
+                    for (int j = height; j >= 0; --j)
+                    {
+                        SetData(j, i, ETileType.Tile);
+                    }
+
+                    _lastY = height;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// tile map data of dungeon exit
+    /// </summary>
+    public class ExitTileMapData : TilemapData
+    {
+        private readonly int _startHeight;
+        private readonly int _exitWidth;
+
+        public ExitTileMapData(int xSize, int ySize, int startHeight, int exitWidth) : base(xSize, ySize)
+        {
+            if (IsWithinBounds(startHeight, ySize) == false ||
+                IsWithinBounds(_exitWidth, xSize) == false)
+            {
+                throw new System.Exception("Invalid parameters");
+            }
+
+            _startHeight = startHeight;
+            _exitWidth = exitWidth;
+        }
+
+        public override void GenerateTileMap()
+        {
+            int height = _startHeight;
+
+            for (int i = 0; i < _xSize; ++i)
+            {
+                //block end
+                if (i == _xSize - 1)
+                {
+                    height = _ySize - 1;
+                }
+
+                //make exit flat
+                else if (i >= _exitWidth)
+                {
+                    height = _startHeight;
+                    _lastY = height;
+                }
+                else if (i < _exitWidth)
                 {
                     int addValue = Random.Range(-1, 2);
                     height = Mathf.Clamp(height + addValue, 0, _ySize);
