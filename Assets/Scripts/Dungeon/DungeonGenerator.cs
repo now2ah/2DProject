@@ -46,7 +46,7 @@ namespace twoDProject.Dungeon
 
     public class DungeonGenerator : MonoBehaviour
     {
-        [Header("Generation Settings")]
+        [Header("General Settings")]
         [SerializeField] private int dungeonLength;
         [SerializeField] private int enemyAmount;
 
