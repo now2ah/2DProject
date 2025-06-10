@@ -5,6 +5,9 @@ using UnityEngine.Tilemaps;
 
 namespace twoDProject.Dungeon
 {
+    /// <summary>
+    /// total dungeon tile map data of multiple tile map datas
+    /// </summary>
     public class DungeonTilemapData
     {
         private List<TilemapData> _tilemapDataList;
@@ -44,6 +47,9 @@ namespace twoDProject.Dungeon
         }
     }
 
+    /// <summary>
+    /// generate dungeon with tile map, start position, exit portal stone, monsters
+    /// </summary>
     public class DungeonGenerator : MonoBehaviour
     {
         [Header("General Settings")]
