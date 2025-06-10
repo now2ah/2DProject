@@ -21,12 +21,14 @@ namespace twoDProject.Dungeon
 
         protected int[,] _tileData;
 
+        protected int _startY;
         protected int _lastY;
 
         public int XSize => _xSize;
         public int YSize => _ySize;
         public int[,] TileData => _tileData;
 
+        public int StartY { get { return _startY; } set { _startY = value; } }
         public int LastY => _lastY;
 
         public abstract void GenerateTileMap();
@@ -120,26 +122,22 @@ namespace twoDProject.Dungeon
     /// </summary>
     public class EntranceTileMapData : TilemapData
     {
-        private readonly int _startHeight;
         private readonly int _entranceWidth;
-
-        public int StartHeight => _startHeight;
 
         public EntranceTileMapData(int xSize, int ySize, int startHeight, int entranceWidth) : base(xSize, ySize)
         {
-            if (IsWithinBounds(startHeight, ySize) == false ||
-                IsWithinBounds(entranceWidth, xSize) == false)
+            if (IsWithinBounds(entranceWidth, xSize) == false)
             {
                 throw new System.Exception("Invalid parameters");
             }
 
-            _startHeight = startHeight;
+            _startY = startHeight;
             _entranceWidth = entranceWidth;
         }
 
         public override void GenerateTileMap()
         {
-            int height = _startHeight;
+            int height = _startY;
 
             for (int i = 0; i < _xSize; ++i)
             {
@@ -151,8 +149,7 @@ namespace twoDProject.Dungeon
                 //make entrance flat
                 else if (i <= _entranceWidth)
                 {
-                    height = _startHeight;
-                    _lastY = height;
+                    height = _startY;
                 }
                 else if (i > _entranceWidth)
                 {
@@ -164,6 +161,8 @@ namespace twoDProject.Dungeon
                 {
                     SetData(j, i, ETileType.Tile);
                 }
+
+                _lastY = height;
             }
         }
     }
@@ -173,18 +172,11 @@ namespace twoDProject.Dungeon
     /// </summary>
     public class HeightTerrainTileMapData : TilemapData
     {
-        private readonly int _startHeight;
         private readonly int _holePerTilemap;
         private readonly float _intensity;
 
-        public HeightTerrainTileMapData(int xSize, int ySize, int startHeight, int holePerTilemap, float intensity) : base(xSize, ySize)
+        public HeightTerrainTileMapData(int xSize, int ySize, int holePerTilemap, float intensity) : base(xSize, ySize)
         {
-            if (IsWithinBounds(startHeight, ySize) == false)
-            {
-                throw new System.Exception("Invalid parameters");
-            }
-
-            _startHeight = startHeight;
             _holePerTilemap = holePerTilemap;
             _intensity = intensity;
         }
@@ -197,7 +189,7 @@ namespace twoDProject.Dungeon
                 holeXs[i] = Random.Range(0, _xSize);
             }
 
-            int height = _startHeight;
+            int height = _startY;
             for (int i = 0; i < _xSize; ++i)
             {
                 if (holeXs.Contains(i))
@@ -228,24 +220,21 @@ namespace twoDProject.Dungeon
     /// </summary>
     public class ExitTileMapData : TilemapData
     {
-        private readonly int _startHeight;
         private readonly int _exitWidth;
 
-        public ExitTileMapData(int xSize, int ySize, int startHeight, int exitWidth) : base(xSize, ySize)
+        public ExitTileMapData(int xSize, int ySize, int exitWidth) : base(xSize, ySize)
         {
-            if (IsWithinBounds(startHeight, ySize) == false ||
-                IsWithinBounds(_exitWidth, xSize) == false)
+            if (IsWithinBounds(_exitWidth, xSize) == false)
             {
                 throw new System.Exception("Invalid parameters");
             }
 
-            _startHeight = startHeight;
             _exitWidth = exitWidth;
         }
 
         public override void GenerateTileMap()
         {
-            int height = _startHeight;
+            int height = _startY;
 
             for (int i = 0; i < _xSize; ++i)
             {
@@ -258,7 +247,7 @@ namespace twoDProject.Dungeon
                 //make exit flat
                 else if (i >= _exitWidth)
                 {
-                    height = _startHeight;
+                    height = _startY;
                     _lastY = height;
                 }
                 else if (i < _exitWidth)
