@@ -1,5 +1,4 @@
 using System.Linq;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 namespace twoDProject.Dungeon

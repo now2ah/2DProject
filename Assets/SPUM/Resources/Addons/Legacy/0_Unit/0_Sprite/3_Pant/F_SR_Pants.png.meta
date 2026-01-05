@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-guid: 50595133ffa7f47f984a134594aedcab
-AssetOrigin:
-  serializedVersion: 1
-  productId: 188715
-  packageName: 2D Pixel Unit Maker - SPUM
-  packageVersion: 1.7.7
-  assetPath: Assets/SPUM/Resources/Addons/Legacy/0_Unit/0_Sprite/3_Pant/F_SR_Pants.png
-  uploadId: 713980
+guid: 7eb057e51cdb4b84596e869c11cf26ba
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -85,7 +78,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -226,3 +219,10 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 188715
+  packageName: 2D Pixel Unit Maker - SPUM
+  packageVersion: 1.8.6
+  assetPath: Assets/SPUM/Resources/Addons/Legacy/0_Unit/0_Sprite/3_Pant/F_SR_Pants.png
+  uploadId: 829618
